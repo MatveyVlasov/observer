@@ -15,6 +15,7 @@ import androidx.lifecycle.ViewModelProvider
 import ru.elections.observer.database.ElectionDatabase
 import ru.elections.observer.databinding.FragmentMainBinding
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -71,6 +72,7 @@ class MainFragment : Fragment() {
                 binding.totalVotersNumber.text =
                     if (it.totalVoters == -1)  "-" else it.totalVoters.toString()
                 binding.counterNumber.text = it.counter.toString()
+                binding.turnoutText.text = viewModel.getTurnout()
             }
         })
 
@@ -81,6 +83,14 @@ class MainFragment : Fragment() {
         binding.totalVotersIconEdit.setOnClickListener {
             onTotalVotersIconEditSelected()
         }
+
+        viewModel.showSnackbarEvent.observe(viewLifecycleOwner, {
+            if (it == true) {
+                Snackbar.make(requireView(),
+                    getString(R.string.negative_counter), Snackbar.LENGTH_SHORT).show()
+                viewModel.doneShowingSnackbar()
+            }
+        })
 
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
             AlertDialog.Builder(context)
@@ -113,6 +123,7 @@ class MainFragment : Fragment() {
             totalVotersEdit.visibility = View.GONE
             totalVotersIconEdit.visibility = View.VISIBLE
             totalVotersNumber.visibility = View.VISIBLE
+            turnoutText.text = viewModel.getTurnout()
             viewModel.onTotalVotersChanged(voters)
         }
     }

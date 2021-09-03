@@ -1,10 +1,12 @@
 package ru.elections.observer
 
 import android.util.Log
+import android.view.View
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import ru.elections.observer.database.Election
@@ -21,13 +23,18 @@ class ElectionViewModel(
     val navigateToMainFragment: LiveData<Boolean>
         get() = _navigateToMainFragment
 
-   var size = MutableLiveData<Int>()
+    private var _showSnackbarEvent = MutableLiveData<Boolean>()
+    val showSnackbarEvent: LiveData<Boolean>
+        get() = _showSnackbarEvent
+
+    var size = MutableLiveData<Int>()
 
     init {
         //viewModelScope.launch { database.clear() }
         Log.i("ElectionViewModel", "Init")
         initializeCurrentElection()
         _navigateToMainFragment.value = false
+        _showSnackbarEvent.value = false
     }
 
 
@@ -62,10 +69,10 @@ class ElectionViewModel(
     fun onNewElectionButton() {
         Log.i("ElectionViewModel", "OnNewElectionButton")
         viewModelScope.launch {
-                Log.i("ElectionViewModel", "Inserting...")
-                database.insert(Election())
-                _currentElection.value = database.getCurrent()
-                Log.i("ElectionViewModel", _currentElection.value.toString())
+            Log.i("ElectionViewModel", "Inserting...")
+            database.insert(Election())
+            _currentElection.value = database.getCurrent()
+            Log.i("ElectionViewModel", _currentElection.value.toString())
             Log.i("ElectionViewModel", "Job done")
             _navigateToMainFragment.value = true
         }
@@ -80,17 +87,34 @@ class ElectionViewModel(
         }
     }
 
-     fun onRemove() {
+    fun onRemove() {
         viewModelScope.launch {
             _currentElection.value = currentElection.value?.also {
+                if (it.counter <= 0) {
+                    _showSnackbarEvent.value = true
+                    return@launch
+                }
                 --it.counter
                 database.update(it)
             }
         }
     }
 
+    fun getTurnout(): String {
+        var turnout = 0.0
+        _currentElection.value?.let {
+            turnout = it.counter / it.totalVoters.toDouble() * 100.0
+        }
+        turnout = maxOf(turnout, 0.0)
+        return String.format("Явка: %2.2f %%", turnout)
+    }
+
     fun doneNavigating() {
         _navigateToMainFragment.value = false
+    }
+
+    fun doneShowingSnackbar() {
+        _showSnackbarEvent.value = false
     }
 
     fun finishElection() {

@@ -7,6 +7,7 @@
         <variable
             name="electionViewModel"
             type="ru.elections.observer.ElectionViewModel" />
+
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -140,6 +141,16 @@
             app:layout_constraintStart_toEndOf="@id/counter_button"
             app:layout_constraintTop_toBottomOf="@+id/counter_number"
             app:srcCompat="@drawable/ic_baseline_person_remove_alt_1_24" />
+
+        <TextView
+            android:id="@+id/turnout_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            tools:text="Явка: 30.32%"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/total_voters_text" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
