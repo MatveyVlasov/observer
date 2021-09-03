@@ -15,38 +15,49 @@
         tools:context=".MainFragment">
 
         <TextView
-            android:id="@+id/textView"
+            android:id="@+id/polling_station_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
             android:text="@string/polling_station"
-            android:textSize="15sp"
+            android:textSize="@dimen/plain_text"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <EditText
-            android:id="@+id/edit_polling_station"
+            android:id="@+id/polling_station_edit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:autofillHints="no"
             android:imeOptions="actionDone"
             android:inputType="number"
             android:maxLength="5"
-            android:text="@{electionViewModel.pollingStation.toString()}"
-            android:autofillHints="no"
-            tools:hint="-"
-            app:layout_constraintStart_toEndOf="@+id/textView"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:text="@{Integer.toString(electionViewModel.lastElection.pollingStation)}"
+            android:textSize="@dimen/plain_text"
+            android:visibility="gone"
+            app:layout_constraintBaseline_toBaselineOf="@+id/polling_station_text"
+            app:layout_constraintStart_toEndOf="@+id/polling_station_text" />
 
         <TextView
-            android:id="@+id/text_polling_station"
+            android:id="@+id/polling_station_number"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:textSize="15sp"
-            android:visibility="gone"
-            app:layout_constraintBaseline_toBaselineOf="@+id/textView"
-            app:layout_constraintStart_toEndOf="@+id/textView" />
+            android:textSize="@dimen/plain_text"
+            android:visibility="visible"
+            app:layout_constraintBaseline_toBaselineOf="@+id/polling_station_text"
+            app:layout_constraintStart_toEndOf="@+id/polling_station_text" />
+
+        <ImageView
+            android:id="@+id/icon_edit"
+            android:layout_width="wrap_content"
+            android:layout_height="20dp"
+            android:layout_marginTop="16dp"
+            android:visibility="visible"
+            app:layout_constraintStart_toEndOf="@+id/polling_station_number"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_baseline_edit_24" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
