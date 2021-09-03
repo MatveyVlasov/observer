@@ -1,6 +1,7 @@
 package ru.elections.observer
 
 import android.os.Bundle
+import android.text.Editable
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -40,20 +41,38 @@ class MainFragment : Fragment() {
 
         binding.pollingStationEdit.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
-                onPollingStationChosen(binding.pollingStationEdit.text.toString().toInt())
+                val text = binding.pollingStationEdit.text.toString()
+                if (text.isEmpty()) return@setOnEditorActionListener false
+                onPollingStationChosen(text.toInt())
             }
             false
         }
 
-        viewModel.lastElection.observe(viewLifecycleOwner, {
-            Log.i("Current value LAST", it.toString())
-            Log.i("Current size LAST", viewModel.size.value.toString())
+        binding.totalVotersEdit.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                val text = binding.totalVotersEdit.text.toString()
+                if (text.isEmpty()) return@setOnEditorActionListener false
+                onTotalVotersChosen(text.toInt())
+            }
+            false
+        }
+
+        viewModel.currentElection.observe(viewLifecycleOwner, {
             if (it == null) navigateToTitle()
-            binding.pollingStationNumber.text = (it?.pollingStation ?: "-").toString()
+            else {
+                binding.pollingStationNumber.text =
+                    if (it.pollingStation == -1)  "-" else it.pollingStation.toString()
+                binding.totalVotersNumber.text =
+                    if (it.totalVoters == -1)  "-" else it.totalVoters.toString()
+            }
         })
 
-        binding.iconEdit.setOnClickListener {
-            onEditIconSelected()
+        binding.pollingStationIconEdit.setOnClickListener {
+            onPollingStationIconEditSelected()
+        }
+
+        binding.totalVotersIconEdit.setOnClickListener {
+            onTotalVotersIconEditSelected()
         }
 
         return binding.root
@@ -66,17 +85,40 @@ class MainFragment : Fragment() {
     private fun onPollingStationChosen(station: Int) {
         binding.apply {
             pollingStationEdit.visibility = View.GONE
-            iconEdit.visibility = View.VISIBLE
+            pollingStationIconEdit.visibility = View.VISIBLE
             pollingStationNumber.visibility = View.VISIBLE
             viewModel.onPollingStationChanged(station)
         }
     }
 
-    private fun onEditIconSelected() {
+    private fun onTotalVotersChosen(voters: Int) {
+        binding.apply {
+            totalVotersEdit.visibility = View.GONE
+            totalVotersIconEdit.visibility = View.VISIBLE
+            totalVotersNumber.visibility = View.VISIBLE
+            viewModel.onTotalVotersChanged(voters)
+        }
+    }
+
+    private fun onPollingStationIconEditSelected() {
         binding.apply {
             pollingStationEdit.visibility = View.VISIBLE
-            iconEdit.visibility = View.GONE
+            pollingStationIconEdit.visibility = View.GONE
             pollingStationNumber.visibility = View.GONE
+            if (viewModel.currentElection.value?.pollingStation == -1) {
+                pollingStationEdit.text = Editable.Factory.getInstance().newEditable("")
+            }
+        }
+    }
+
+    private fun onTotalVotersIconEditSelected() {
+        binding.apply {
+            totalVotersEdit.visibility = View.VISIBLE
+            totalVotersIconEdit.visibility = View.GONE
+            totalVotersNumber.visibility = View.GONE
+            if (viewModel.currentElection.value?.totalVoters == -1) {
+                totalVotersEdit.text = Editable.Factory.getInstance().newEditable("")
+            }
         }
     }
 

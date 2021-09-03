@@ -33,7 +33,7 @@
             android:imeOptions="actionDone"
             android:inputType="number"
             android:maxLength="5"
-            android:text="@{Integer.toString(electionViewModel.lastElection.pollingStation)}"
+            android:text="@{Integer.toString(electionViewModel.currentElection.pollingStation)}"
             android:textSize="@dimen/plain_text"
             android:visibility="gone"
             app:layout_constraintBaseline_toBaselineOf="@+id/polling_station_text"
@@ -50,12 +50,57 @@
             app:layout_constraintStart_toEndOf="@+id/polling_station_text" />
 
         <ImageView
-            android:id="@+id/icon_edit"
+            android:id="@+id/polling_station_icon_edit"
             android:layout_width="wrap_content"
             android:layout_height="20dp"
             android:layout_marginTop="16dp"
             android:visibility="visible"
             app:layout_constraintStart_toEndOf="@+id/polling_station_number"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_baseline_edit_24" />
+
+        <TextView
+            android:id="@+id/total_voters_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:text="@string/total_voters"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/polling_station_text" />
+
+        <EditText
+            android:id="@+id/total_voters_edit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:autofillHints="no"
+            android:imeOptions="actionDone"
+            android:inputType="number"
+            android:maxLength="5"
+            android:text="@{Integer.toString(electionViewModel.currentElection.totalVoters)}"
+            android:textSize="@dimen/plain_text"
+            android:visibility="gone"
+            app:layout_constraintBaseline_toBaselineOf="@+id/total_voters_text"
+            app:layout_constraintStart_toEndOf="@+id/total_voters_text" />
+
+
+        <TextView
+            android:id="@+id/total_voters_number"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:textSize="@dimen/plain_text"
+            android:visibility="visible"
+            app:layout_constraintBaseline_toBaselineOf="@+id/total_voters_text"
+            app:layout_constraintStart_toEndOf="@+id/total_voters_text" />
+
+        <ImageView
+            android:id="@+id/total_voters_icon_edit"
+            android:layout_width="wrap_content"
+            android:layout_height="20dp"
+            android:layout_marginTop="52dp"
+            android:visibility="visible"
+            app:layout_constraintStart_toEndOf="@+id/total_voters_number"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/ic_baseline_edit_24" />
 

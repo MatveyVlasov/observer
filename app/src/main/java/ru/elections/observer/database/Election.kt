@@ -10,7 +10,10 @@ data class Election(
     var electionId: Long = 0L,
 
     @ColumnInfo(name = "polling_station")
-    var pollingStation: Int = -1
+    var pollingStation: Int = -1,
+
+    @ColumnInfo(name = "total_voters")
+    var totalVoters: Int = -1
 ) {
 
 }

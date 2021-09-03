@@ -13,9 +13,9 @@ import ru.elections.observer.database.ElectionDatabaseDao
 class ElectionViewModel(
     val database: ElectionDatabaseDao) : ViewModel() {
 
-    private var _lastElection = MutableLiveData<Election?>()
-    val lastElection: LiveData<Election?>
-        get() = _lastElection
+    private var _currentElection = MutableLiveData<Election?>()
+    val currentElection: LiveData<Election?>
+        get() = _currentElection
 
     private var _navigateToMainFragment = MutableLiveData<Boolean>()
     val navigateToMainFragment: LiveData<Boolean>
@@ -25,25 +25,31 @@ class ElectionViewModel(
 
     init {
         //viewModelScope.launch { database.clear() }
-        Log.i("Current init", "It's INIT block")
-        initializeLastElection()
+        initializecurrentElection()
         _navigateToMainFragment.value = false
     }
 
 
-    private fun initializeLastElection() {
-        Log.i("Current init", "Heq")
+    private fun initializecurrentElection() {
         viewModelScope.launch {
-            _lastElection.value = database.getLast()
+            _currentElection.value = database.getLast()
             size.value = database.getSize()
-            Log.i("Current init", size.value.toString())
         }
     }
 
     fun onPollingStationChanged(station: Int) {
         viewModelScope.launch {
-            _lastElection.value = _lastElection.value?.also {
+            _currentElection.value = _currentElection.value?.also {
                 it.pollingStation = station
+                database.update(it)
+            }
+        }
+    }
+
+    fun onTotalVotersChanged(voters: Int) {
+        viewModelScope.launch {
+            _currentElection.value = _currentElection.value?.also {
+                it.totalVoters = voters
                 database.update(it)
             }
         }
@@ -53,7 +59,7 @@ class ElectionViewModel(
         viewModelScope.launch {
             val job: Job = viewModelScope.launch {
                 database.insert(Election())
-                initializeLastElection()
+                initializecurrentElection()
             }
             job.join()
             _navigateToMainFragment.value = true
