@@ -16,8 +16,8 @@ interface ElectionDatabaseDao {
     @Query("DELETE FROM election_info")
     suspend fun clear()
 
-    @Query("SELECT * FROM election_info ORDER BY electionId DESC LIMIT 1")
-    suspend fun getLast(): Election?
+    @Query("SELECT * FROM election_info WHERE not is_finished ORDER BY electionId DESC LIMIT 1")
+    suspend fun getCurrent(): Election?
 
     @Query("SELECT COUNT(*) FROM election_info")
     suspend fun getSize(): Int

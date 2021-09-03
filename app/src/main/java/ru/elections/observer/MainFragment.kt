@@ -7,6 +7,8 @@ import android.util.Log
 import android.view.*
 import android.view.inputmethod.EditorInfo
 import android.widget.Toast
+import androidx.activity.addCallback
+import androidx.core.app.ActivityCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -44,7 +46,7 @@ class MainFragment : Fragment() {
         binding.pollingStationEdit.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 val text = binding.pollingStationEdit.text.toString()
-                if (text.isEmpty()) return@setOnEditorActionListener false
+                if (text.isEmpty() || text.toInt() < 0) return@setOnEditorActionListener false
                 onPollingStationChosen(text.toInt())
             }
             false
@@ -53,13 +55,15 @@ class MainFragment : Fragment() {
         binding.totalVotersEdit.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 val text = binding.totalVotersEdit.text.toString()
-                if (text.isEmpty()) return@setOnEditorActionListener false
+                if (text.isEmpty() || text.toInt() < 0) return@setOnEditorActionListener false
                 onTotalVotersChosen(text.toInt())
             }
             false
         }
 
         viewModel.currentElection.observe(viewLifecycleOwner, {
+            Log.i("MainFragment", "Check if null")
+            Log.i("MainFragment", it.toString())
             if (it == null) navigateToTitle()
             else {
                 binding.pollingStationNumber.text =
@@ -77,10 +81,20 @@ class MainFragment : Fragment() {
             onTotalVotersIconEditSelected()
         }
 
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
+            AlertDialog.Builder(context)
+                .setTitle("Выход")
+                .setMessage("Вы действительно хотите выйти из приложения?")
+                .setPositiveButton("Да") { _, _ -> ActivityCompat.finishAffinity(requireActivity()) }
+                .setNegativeButton("Нет") { _, _ ->  }
+                .show()
+        }
+
         return binding.root
     }
 
     private fun navigateToTitle() {
+        Log.i("MainFragment", "Navigate to title")
         this.findNavController().navigate(MainFragmentDirections.actionMainFragmentToTitleFragment())
     }
 
@@ -136,7 +150,7 @@ class MainFragment : Fragment() {
                     .setTitle("Завершить выборы")
                     .setMessage("Вы действительно хотите завершить выборы?")
                     .setPositiveButton("Да") { _, _ -> onFinishYes() }
-                    .setNegativeButton("Нет") { _, _ -> onFinishNo() }
+                    .setNegativeButton("Нет") { _, _ ->  }
                     .show()
             }
         }
@@ -147,9 +161,5 @@ class MainFragment : Fragment() {
         navigateToTitle()
         viewModel.finishElection()
         Toast.makeText(context, "Выборы успешно завершены", Toast.LENGTH_LONG).show()
-    }
-
-    private fun onFinishNo() {
-        Toast.makeText(context, "Вы отменили завершение выборов", Toast.LENGTH_SHORT).show()
     }
 }

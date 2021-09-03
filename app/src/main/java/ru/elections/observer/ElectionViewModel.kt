@@ -25,15 +25,19 @@ class ElectionViewModel(
 
     init {
         //viewModelScope.launch { database.clear() }
-        initializecurrentElection()
+        Log.i("ElectionViewModel", "Init")
+        initializeCurrentElection()
         _navigateToMainFragment.value = false
     }
 
 
-    private fun initializecurrentElection() {
+    private fun initializeCurrentElection() {
         viewModelScope.launch {
-            _currentElection.value = database.getLast()
+            Log.i("ElectionViewModel", "Initializing...")
+            _currentElection.value = database.getCurrent()
             size.value = database.getSize()
+            Log.i("ElectionViewModel", _currentElection.value.toString())
+            Log.i("ElectionViewModel", "Done!")
         }
     }
 
@@ -56,12 +60,13 @@ class ElectionViewModel(
     }
 
     fun onNewElectionButton() {
+        Log.i("ElectionViewModel", "OnNewElectionButton")
         viewModelScope.launch {
-            val job: Job = viewModelScope.launch {
+                Log.i("ElectionViewModel", "Inserting...")
                 database.insert(Election())
-                initializecurrentElection()
-            }
-            job.join()
+                _currentElection.value = database.getCurrent()
+                Log.i("ElectionViewModel", _currentElection.value.toString())
+            Log.i("ElectionViewModel", "Job done")
             _navigateToMainFragment.value = true
         }
     }
@@ -72,7 +77,11 @@ class ElectionViewModel(
 
     fun finishElection() {
         viewModelScope.launch {
-            database.clear()
+            _currentElection.value = currentElection.value?.also {
+                it.isFinished = true
+                database.update(it)
+            }
+            _currentElection.value = null
         }
     }
 

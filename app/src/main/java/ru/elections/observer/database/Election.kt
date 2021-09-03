@@ -13,7 +13,10 @@ data class Election(
     var pollingStation: Int = -1,
 
     @ColumnInfo(name = "total_voters")
-    var totalVoters: Int = -1
+    var totalVoters: Int = -1,
+
+    @ColumnInfo(name = "is_finished")
+    var isFinished: Boolean = false
 ) {
 
 }
