@@ -33,6 +33,7 @@
             android:imeOptions="actionDone"
             android:inputType="number"
             android:maxLength="5"
+            android:hint="@string/polling_station_hint"
             android:text="@{Integer.toString(electionViewModel.currentElection.pollingStation)}"
             android:textSize="@dimen/plain_text"
             android:visibility="gone"
@@ -55,6 +56,7 @@
             android:layout_height="20dp"
             android:layout_marginTop="16dp"
             android:visibility="visible"
+            android:contentDescription="@string/edit"
             app:layout_constraintStart_toEndOf="@+id/polling_station_number"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/ic_baseline_edit_24" />
@@ -77,6 +79,7 @@
             android:imeOptions="actionDone"
             android:inputType="number"
             android:maxLength="5"
+            android:hint="@string/total_voters_hint"
             android:text="@{Integer.toString(electionViewModel.currentElection.totalVoters)}"
             android:textSize="@dimen/plain_text"
             android:visibility="gone"
@@ -100,9 +103,43 @@
             android:layout_height="20dp"
             android:layout_marginTop="52dp"
             android:visibility="visible"
+            android:contentDescription="@string/edit"
             app:layout_constraintStart_toEndOf="@+id/total_voters_number"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/ic_baseline_edit_24" />
+
+        <TextView
+            android:id="@+id/counter_number"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="60sp"
+            tools:text="122"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageButton
+            android:id="@+id/counter_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="@{() -> electionViewModel.onCount()}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/remove_button"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/counter_number"
+            app:srcCompat="@drawable/ic_baseline_person_add_alt_1_24" />
+
+        <ImageButton
+            android:id="@+id/remove_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="@{() -> electionViewModel.onRemove()}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/counter_button"
+            app:layout_constraintTop_toBottomOf="@+id/counter_number"
+            app:srcCompat="@drawable/ic_baseline_person_remove_alt_1_24" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

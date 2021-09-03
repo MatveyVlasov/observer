@@ -71,6 +71,24 @@ class ElectionViewModel(
         }
     }
 
+    fun onCount() {
+        viewModelScope.launch {
+            _currentElection.value = currentElection.value?.also {
+                ++it.counter
+                database.update(it)
+            }
+        }
+    }
+
+     fun onRemove() {
+        viewModelScope.launch {
+            _currentElection.value = currentElection.value?.also {
+                --it.counter
+                database.update(it)
+            }
+        }
+    }
+
     fun doneNavigating() {
         _navigateToMainFragment.value = false
     }

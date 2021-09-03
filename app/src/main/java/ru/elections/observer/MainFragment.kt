@@ -70,6 +70,7 @@ class MainFragment : Fragment() {
                     if (it.pollingStation == -1)  "-" else it.pollingStation.toString()
                 binding.totalVotersNumber.text =
                     if (it.totalVoters == -1)  "-" else it.totalVoters.toString()
+                binding.counterNumber.text = it.counter.toString()
             }
         })
 

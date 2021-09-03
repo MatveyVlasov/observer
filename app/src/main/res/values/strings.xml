@@ -4,4 +4,7 @@
     <string name="new_election">Новые выборы</string>
     <string name="total_voters">Число избирателей:</string>
     <string name="finish_election">Завершить выборы</string>
+    <string name="polling_station_hint">Введите номер</string>
+    <string name="total_voters_hint">Введите число</string>
+    <string name="edit">Отредактировать</string>
 </resources>
