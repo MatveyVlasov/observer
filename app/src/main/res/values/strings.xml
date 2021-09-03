@@ -3,4 +3,5 @@
     <string name="polling_station">УИК №:</string>
     <string name="new_election">Новые выборы</string>
     <string name="total_voters">Число избирателей:</string>
+    <string name="finish_election">Завершить выборы</string>
 </resources>

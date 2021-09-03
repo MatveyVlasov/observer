@@ -1,12 +1,12 @@
 package ru.elections.observer
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.text.Editable
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.view.inputmethod.EditorInfo
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -27,6 +27,8 @@ class MainFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        setHasOptionsMenu(true)
+
         binding = DataBindingUtil.inflate(inflater,
                         R.layout.fragment_main, container, false)
 
@@ -122,4 +124,32 @@ class MainFragment : Fragment() {
         }
     }
 
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.main_menu, menu)
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.finish_election -> {
+                AlertDialog.Builder(context)
+                    .setTitle("Завершить выборы")
+                    .setMessage("Вы действительно хотите завершить выборы?")
+                    .setPositiveButton("Да") { _, _ -> onFinishYes() }
+                    .setNegativeButton("Нет") { _, _ -> onFinishNo() }
+                    .show()
+            }
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    private fun onFinishYes() {
+        navigateToTitle()
+        viewModel.finishElection()
+        Toast.makeText(context, "Выборы успешно завершены", Toast.LENGTH_LONG).show()
+    }
+
+    private fun onFinishNo() {
+        Toast.makeText(context, "Вы отменили завершение выборов", Toast.LENGTH_SHORT).show()
+    }
 }

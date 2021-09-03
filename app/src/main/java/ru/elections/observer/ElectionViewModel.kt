@@ -70,4 +70,10 @@ class ElectionViewModel(
         _navigateToMainFragment.value = false
     }
 
+    fun finishElection() {
+        viewModelScope.launch {
+            database.clear()
+        }
+    }
+
 }
