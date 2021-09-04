@@ -1,7 +1,6 @@
 package ru.elections.observer
 
 import android.app.AlertDialog
-import android.content.Context
 import android.content.Context.INPUT_METHOD_SERVICE
 import android.os.Bundle
 import android.text.Editable
@@ -11,17 +10,16 @@ import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.activity.addCallback
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat.getSystemService
+import androidx.core.app.ActivityCompat.finishAffinity
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewModelScope
 import ru.elections.observer.database.ElectionDatabase
 import ru.elections.observer.databinding.FragmentMainBinding
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.coroutines.launch
+import java.util.*
+import kotlin.concurrent.schedule
 
 class MainFragment : Fragment() {
     lateinit var binding: FragmentMainBinding
@@ -77,7 +75,7 @@ class MainFragment : Fragment() {
                     if (it.totalVoters == -1)  "-" else it.totalVoters.toString()
                 counterNumber.text = it.counter.toString()
                 turnoutText.text = viewModel.getTurnout()
-                lastActions.smoothScrollToPosition(0)
+                Timer().schedule(100)  { lastActions.smoothScrollToPosition(0) }
             }
         })
 
@@ -109,10 +107,10 @@ class MainFragment : Fragment() {
 
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
             AlertDialog.Builder(context)
-                .setTitle("Выход")
-                .setMessage("Вы действительно хотите выйти из приложения?")
-                .setPositiveButton("Да") { _, _ -> ActivityCompat.finishAffinity(requireActivity()) }
-                .setNegativeButton("Нет") { _, _ ->  }
+                .setTitle(getString(R.string.exit))
+                .setMessage(getString(R.string.exit_confirmation))
+                .setPositiveButton(getString(R.string.yes)) { _, _ -> finishAffinity(requireActivity()) }
+                .setNegativeButton(getString(R.string.no)) { _, _ ->  }
                 .show()
         }
 
@@ -174,10 +172,10 @@ class MainFragment : Fragment() {
         when (item.itemId) {
             R.id.finish_election -> {
                 AlertDialog.Builder(context)
-                    .setTitle("Завершить выборы")
-                    .setMessage("Вы действительно хотите завершить выборы?")
-                    .setPositiveButton("Да") { _, _ -> onFinishYes() }
-                    .setNegativeButton("Нет") { _, _ ->  }
+                    .setTitle(getString(R.string.election_finish))
+                    .setMessage(getString(R.string.election_finish_confirmation))
+                    .setPositiveButton(getString(R.string.yes)) { _, _ -> onFinishYes() }
+                    .setNegativeButton(getString(R.string.no)) { _, _ ->  }
                     .show()
             }
         }
@@ -187,7 +185,7 @@ class MainFragment : Fragment() {
     private fun onFinishYes() {
         navigateToTitle()
         viewModel.finishElection()
-        Toast.makeText(context, "Выборы успешно завершены", Toast.LENGTH_LONG).show()
+        Toast.makeText(context, getString(R.string.election_finished), Toast.LENGTH_LONG).show()
     }
 
     private fun View.hideKeyboard() {

@@ -8,4 +8,15 @@
     <string name="total_voters_hint">Введите число</string>
     <string name="edit">Отредактировать</string>
     <string name="negative_counter">Число не может быть отрицательным!</string>
+    <string name="id">ID</string>
+    <string name="action">Действие</string>
+    <string name="date">Дата</string>
+    <string name="total">Всего</string>
+    <string name="exit">Выход</string>
+    <string name="exit_confirmation">Вы действительно хотите выйти из приложения?</string>
+    <string name="yes">Да</string>
+    <string name="no">Нет</string>
+    <string name="election_finish">Завершение выборов</string>
+    <string name="election_finish_confirmation">Вы действительно хотите завершить выборы?</string>
+    <string name="election_finished">Выборы успешно завершены</string>
 </resources>

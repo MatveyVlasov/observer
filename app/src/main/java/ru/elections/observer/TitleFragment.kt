@@ -2,11 +2,9 @@ package ru.elections.observer
 
 import android.app.AlertDialog
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.EditorInfo
 import androidx.activity.addCallback
 import androidx.core.app.ActivityCompat.finishAffinity
 import androidx.databinding.DataBindingUtil
@@ -46,10 +44,10 @@ class TitleFragment : Fragment() {
 
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
             AlertDialog.Builder(context)
-                .setTitle("Выход")
-                .setMessage("Вы действительно хотите выйти из приложения?")
-                .setPositiveButton("Да") { _, _ -> finishAffinity(requireActivity()) }
-                .setNegativeButton("Нет") { _, _ ->  }
+                .setTitle(getString(R.string.exit))
+                .setMessage(getString(R.string.exit_confirmation))
+                .setPositiveButton(getString(R.string.yes)) { _, _ -> finishAffinity(requireActivity()) }
+                .setNegativeButton(getString(R.string.no)) { _, _ ->  }
                 .show()
         }
 
