@@ -1,14 +1,13 @@
 package ru.elections.observer
 
 import android.util.Log
-import android.view.View
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.android.material.snackbar.Snackbar
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import ru.elections.observer.database.ACTIONS
+import ru.elections.observer.database.Action
 import ru.elections.observer.database.Election
 import ru.elections.observer.database.ElectionDatabaseDao
 
@@ -27,10 +26,11 @@ class ElectionViewModel(
     val showSnackbarEvent: LiveData<Boolean>
         get() = _showSnackbarEvent
 
+    var actions = database.getAllActions()
+
     var size = MutableLiveData<Int>()
 
     init {
-        //viewModelScope.launch { database.clear() }
         Log.i("ElectionViewModel", "Init")
         initializeCurrentElection()
         _navigateToMainFragment.value = false
@@ -83,6 +83,8 @@ class ElectionViewModel(
             _currentElection.value = currentElection.value?.also {
                 ++it.counter
                 database.update(it)
+                database.insert(Action(electionId = it.electionId, actionType = ACTIONS.COUNT,
+                    actionDate = System.currentTimeMillis(), actionTotal = it.counter))
             }
         }
     }
@@ -96,6 +98,8 @@ class ElectionViewModel(
                 }
                 --it.counter
                 database.update(it)
+                database.insert(Action(electionId = it.electionId, actionType = ACTIONS.REMOVE,
+                    actionDate = System.currentTimeMillis(), actionTotal = it.counter))
             }
         }
     }

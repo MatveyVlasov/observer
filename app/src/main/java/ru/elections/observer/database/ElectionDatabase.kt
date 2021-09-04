@@ -5,7 +5,7 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 
-@Database(entities = [Election::class], version = 4, exportSchema = false)
+@Database(entities = [Election::class, Action::class], version = 5, exportSchema = false)
 abstract class ElectionDatabase : RoomDatabase() {
     abstract val electionDatabaseDao: ElectionDatabaseDao
 
@@ -18,7 +18,7 @@ abstract class ElectionDatabase : RoomDatabase() {
                 var instance = INSTANCE
                 if (instance == null) {
                     instance = Room.databaseBuilder(context.applicationContext,
-                        ElectionDatabase::class.java, "election_info")
+                        ElectionDatabase::class.java, "elections")
                         .fallbackToDestructiveMigration()
                         .build()
                     INSTANCE = instance

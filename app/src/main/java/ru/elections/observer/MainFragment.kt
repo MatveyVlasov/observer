@@ -1,25 +1,27 @@
 package ru.elections.observer
 
 import android.app.AlertDialog
+import android.content.Context
+import android.content.Context.INPUT_METHOD_SERVICE
 import android.os.Bundle
 import android.text.Editable
 import android.util.Log
 import android.view.*
 import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
 import ru.elections.observer.database.ElectionDatabase
 import ru.elections.observer.databinding.FragmentMainBinding
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
-import ru.elections.observer.database.Election
 
 class MainFragment : Fragment() {
     lateinit var binding: FragmentMainBinding
@@ -49,6 +51,7 @@ class MainFragment : Fragment() {
                 val text = binding.pollingStationEdit.text.toString()
                 if (text.isEmpty() || text.toInt() < 0) return@setOnEditorActionListener false
                 onPollingStationChosen(text.toInt())
+                view?.hideKeyboard()
             }
             false
         }
@@ -58,6 +61,7 @@ class MainFragment : Fragment() {
                 val text = binding.totalVotersEdit.text.toString()
                 if (text.isEmpty() || text.toInt() < 0) return@setOnEditorActionListener false
                 onTotalVotersChosen(text.toInt())
+                view?.hideKeyboard()
             }
             false
         }
@@ -66,13 +70,14 @@ class MainFragment : Fragment() {
             Log.i("MainFragment", "Check if null")
             Log.i("MainFragment", it.toString())
             if (it == null) navigateToTitle()
-            else {
-                binding.pollingStationNumber.text =
+            else binding.apply {
+                pollingStationNumber.text =
                     if (it.pollingStation == -1)  "-" else it.pollingStation.toString()
-                binding.totalVotersNumber.text =
+                totalVotersNumber.text =
                     if (it.totalVoters == -1)  "-" else it.totalVoters.toString()
-                binding.counterNumber.text = it.counter.toString()
-                binding.turnoutText.text = viewModel.getTurnout()
+                counterNumber.text = it.counter.toString()
+                turnoutText.text = viewModel.getTurnout()
+                lastActions.smoothScrollToPosition(0)
             }
         })
 
@@ -91,6 +96,16 @@ class MainFragment : Fragment() {
                 viewModel.doneShowingSnackbar()
             }
         })
+
+        val adapter = LastActionsAdapter()
+        binding.lastActions.adapter = adapter
+
+        viewModel.actions.observe(viewLifecycleOwner, {
+            it?.let {
+                adapter.submitList(it)
+            }
+        })
+
 
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
             AlertDialog.Builder(context)
@@ -173,5 +188,10 @@ class MainFragment : Fragment() {
         navigateToTitle()
         viewModel.finishElection()
         Toast.makeText(context, "Выборы успешно завершены", Toast.LENGTH_LONG).show()
+    }
+
+    private fun View.hideKeyboard() {
+        val imm = context.getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(windowToken, 0)
     }
 }
