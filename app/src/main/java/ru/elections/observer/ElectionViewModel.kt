@@ -27,9 +27,7 @@ class ElectionViewModel(
         get() = _showSnackbarEvent
 
     val actions = database.getAllActions()
-    // val actions = database.getAllActions()
 
-    var size = MutableLiveData<Int>()
 
     init {
         Log.i("ElectionViewModel", "Init")
@@ -43,7 +41,6 @@ class ElectionViewModel(
         viewModelScope.launch {
             Log.i("ElectionViewModel", "Initializing...")
             _currentElection.value = database.getCurrent()
-            size.value = database.getSize()
             Log.i("ElectionViewModel", _currentElection.value.toString())
             Log.i("ElectionViewModel", "Done!")
         }

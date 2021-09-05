@@ -25,6 +25,4 @@ data class Action(
 
     @ColumnInfo(name = "action_total")
     var actionTotal: Int
-) {
-
-}
+)

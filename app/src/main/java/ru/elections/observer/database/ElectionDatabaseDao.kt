@@ -20,9 +20,6 @@ interface ElectionDatabaseDao {
     @Query("SELECT * FROM election_info WHERE not is_finished ORDER BY electionId DESC LIMIT 1")
     suspend fun getCurrent(): Election?
 
-    @Query("SELECT COUNT(*) FROM election_info")
-    suspend fun getSize(): Int
-
     @Insert
     suspend fun insert(action: Action)
 

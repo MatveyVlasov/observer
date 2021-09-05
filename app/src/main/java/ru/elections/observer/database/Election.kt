@@ -23,6 +23,4 @@ data class Election(
 
     @ColumnInfo(name = "is_finished")
     var isFinished: Boolean = false
-) {
-
-}
+)
