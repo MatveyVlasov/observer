@@ -32,6 +32,8 @@ interface ElectionDatabaseDao {
     @Query("DELETE FROM actions")
     suspend fun clearActions()
 
-    @Query("SELECT * FROM actions ORDER BY actionId DESC")
+    @Query("""SELECT * FROM actions WHERE actions.electionId =
+         (SELECT electionId FROM election_info WHERE not is_finished ORDER BY electionId DESC LIMIT 1) 
+          ORDER BY actionId DESC""")
     fun getAllActions(): LiveData<List<Action>>
 }

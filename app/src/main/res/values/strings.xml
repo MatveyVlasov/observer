@@ -19,4 +19,5 @@
     <string name="election_finish">Завершение выборов</string>
     <string name="election_finish_confirmation">Вы действительно хотите завершить выборы?</string>
     <string name="election_finished">Выборы успешно завершены</string>
+    <string name="voted">Проголосовало до начала наблюдения:</string>
 </resources>

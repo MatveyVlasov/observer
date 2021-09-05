@@ -64,6 +64,16 @@ class MainFragment : Fragment() {
             false
         }
 
+        binding.votedEdit.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                val text = binding.votedEdit.text.toString()
+                if (text.isEmpty() || text.toInt() < 0) return@setOnEditorActionListener false
+                onVotedChosen(text.toInt())
+                view?.hideKeyboard()
+            }
+            false
+        }
+
         viewModel.currentElection.observe(viewLifecycleOwner, {
             Log.i("MainFragment", "Check if null")
             Log.i("MainFragment", it.toString())
@@ -73,6 +83,7 @@ class MainFragment : Fragment() {
                     if (it.pollingStation == -1)  "-" else it.pollingStation.toString()
                 totalVotersNumber.text =
                     if (it.totalVoters == -1)  "-" else it.totalVoters.toString()
+                votedNumber.text = it.voted.toString()
                 counterNumber.text = it.counter.toString()
                 turnoutText.text = viewModel.getTurnout()
                 Timer().schedule(100)  { lastActions.smoothScrollToPosition(0) }
@@ -85,6 +96,10 @@ class MainFragment : Fragment() {
 
         binding.totalVotersIconEdit.setOnClickListener {
             onTotalVotersIconEditSelected()
+        }
+
+        binding.votedIconEdit.setOnClickListener {
+            onVotedIconEditSelected()
         }
 
         viewModel.showSnackbarEvent.observe(viewLifecycleOwner, {
@@ -136,10 +151,20 @@ class MainFragment : Fragment() {
             totalVotersEdit.visibility = View.GONE
             totalVotersIconEdit.visibility = View.VISIBLE
             totalVotersNumber.visibility = View.VISIBLE
-            turnoutText.text = viewModel.getTurnout()
+            //turnoutText.text = viewModel.getTurnout()
             viewModel.onTotalVotersChanged(voters)
         }
     }
+
+    private fun onVotedChosen(voters: Int) {
+        binding.apply {
+            votedEdit.visibility = View.GONE
+            votedIconEdit.visibility = View.VISIBLE
+            votedNumber.visibility = View.VISIBLE
+            viewModel.onVotedChanged(voters)
+        }
+    }
+
 
     private fun onPollingStationIconEditSelected() {
         binding.apply {
@@ -160,6 +185,14 @@ class MainFragment : Fragment() {
             if (viewModel.currentElection.value?.totalVoters == -1) {
                 totalVotersEdit.text = Editable.Factory.getInstance().newEditable("")
             }
+        }
+    }
+
+    private fun onVotedIconEditSelected() {
+        binding.apply {
+            votedEdit.visibility = View.VISIBLE
+            votedIconEdit.visibility = View.GONE
+            votedNumber.visibility = View.GONE
         }
     }
 

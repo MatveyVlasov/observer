@@ -26,7 +26,8 @@ class ElectionViewModel(
     val showSnackbarEvent: LiveData<Boolean>
         get() = _showSnackbarEvent
 
-    var actions = database.getAllActions()
+    val actions = database.getAllActions()
+    // val actions = database.getAllActions()
 
     var size = MutableLiveData<Int>()
 
@@ -62,6 +63,18 @@ class ElectionViewModel(
             _currentElection.value = _currentElection.value?.also {
                 it.totalVoters = voters
                 database.update(it)
+            }
+        }
+    }
+
+    fun onVotedChanged(voters: Int) {
+        viewModelScope.launch {
+            _currentElection.value = _currentElection.value?.also {
+                it.voted = voters
+                it.counter = voters
+                database.update(it)
+                database.insert(Action(electionId = it.electionId, actionType = ACTIONS.SET,
+                    actionDate = System.currentTimeMillis(), actionTotal = it.counter))
             }
         }
     }

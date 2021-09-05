@@ -1,8 +1,10 @@
 package ru.elections.observer
 
 import android.annotation.SuppressLint
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
+import ru.elections.observer.database.ACTIONS
 import ru.elections.observer.database.Action
 import java.text.SimpleDateFormat
 
@@ -16,8 +18,12 @@ class BindingUtils {
 
         @JvmStatic
         @BindingAdapter("itemAction")
-        fun TextView.setItemAction(item: Action) {
-            text = item.actionType.toString()
+        fun ImageView.setItemAction(item: Action) {
+            setImageResource(when (item.actionType) {
+                ACTIONS.COUNT -> R.drawable.ic_baseline_add_20
+                ACTIONS.REMOVE -> R.drawable.ic_baseline_horizontal_rule_20
+                else -> R.drawable.ic_baseline_edit_20
+            })
         }
 
         @SuppressLint("SimpleDateFormat")

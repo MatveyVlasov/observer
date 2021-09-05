@@ -16,19 +16,19 @@
 
         <TextView
             android:id="@+id/item_id"
-            android:layout_width="50dp"
+            android:layout_width="30dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="5dp"
             app:itemId="@{action}"
             tools:text="123" />
 
-        <TextView
+        <ImageView
             android:id="@+id/item_action"
-            android:layout_width="80dp"
+            android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="5dp"
             app:itemAction="@{action}"
-            tools:text="+1" />
+            tools:src="@drawable/ic_baseline_add_20" />
 
         <TextView
             android:id="@+id/item_date"

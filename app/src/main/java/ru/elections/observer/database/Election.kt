@@ -15,6 +15,9 @@ data class Election(
     @ColumnInfo(name = "total_voters")
     var totalVoters: Int = -1,
 
+    @ColumnInfo(name = "voted")
+    var voted: Int = 0,
+
     @ColumnInfo(name = "counter")
     var counter: Int = 0,
 
