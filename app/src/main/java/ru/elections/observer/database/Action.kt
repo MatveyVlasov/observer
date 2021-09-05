@@ -5,7 +5,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 enum class ACTIONS {
-    COUNT, REMOVE, SET
+    COUNT, REMOVE, SET, ADD
 }
 
 

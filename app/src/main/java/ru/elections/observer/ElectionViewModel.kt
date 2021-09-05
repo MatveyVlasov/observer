@@ -67,13 +67,14 @@ class ElectionViewModel(
         }
     }
 
-    fun onVotedChanged(voters: Int) {
+    fun onVotedChanged(voters: Int, counted: Int) {
         viewModelScope.launch {
             _currentElection.value = _currentElection.value?.also {
                 it.voted = voters
-                it.counter = voters
+                it.counter = voters + counted
                 database.update(it)
-                database.insert(Action(electionId = it.electionId, actionType = ACTIONS.SET,
+                database.insert(Action(electionId = it.electionId,
+                    actionType = if (counted > 0) ACTIONS.ADD else ACTIONS.SET,
                     actionDate = System.currentTimeMillis(), actionTotal = it.counter))
             }
         }

@@ -22,7 +22,8 @@ class BindingUtils {
             setImageResource(when (item.actionType) {
                 ACTIONS.COUNT -> R.drawable.ic_baseline_add_20
                 ACTIONS.REMOVE -> R.drawable.ic_baseline_horizontal_rule_20
-                else -> R.drawable.ic_baseline_edit_20
+                ACTIONS.SET -> R.drawable.ic_baseline_edit_20
+                else -> R.drawable.ic_baseline_add_box_20
             })
         }
 

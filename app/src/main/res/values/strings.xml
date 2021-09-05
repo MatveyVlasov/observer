@@ -4,8 +4,8 @@
     <string name="new_election">Новые выборы</string>
     <string name="total_voters">Число избирателей:</string>
     <string name="finish_election">Завершить выборы</string>
-    <string name="polling_station_hint">Введите номер</string>
-    <string name="total_voters_hint">Введите число</string>
+    <string name="polling_station_hint">267</string>
+    <string name="total_voters_hint">2000</string>
     <string name="edit">Отредактировать</string>
     <string name="negative_counter">Число не может быть отрицательным!</string>
     <string name="id">ID</string>
@@ -20,4 +20,10 @@
     <string name="election_finish_confirmation">Вы действительно хотите завершить выборы?</string>
     <string name="election_finished">Выборы успешно завершены</string>
     <string name="voted">Проголосовало до начала наблюдения:</string>
+    <string name="count">Посчитать избирателя</string>
+    <string name="remove">Вычесть избирателя</string>
+    <string name="voted_edit">Изменение числа проголосовавших</string>
+    <string name="voted_edit_confirmation">
+        Сохранить уже подсчитанных избирателей?\nДа: всего %d проголосовавших\nНет: всего %d проголосовавших
+    </string>
 </resources>

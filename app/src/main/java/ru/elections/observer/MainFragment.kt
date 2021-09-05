@@ -68,7 +68,7 @@ class MainFragment : Fragment() {
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 val text = binding.votedEdit.text.toString()
                 if (text.isEmpty() || text.toInt() < 0) return@setOnEditorActionListener false
-                onVotedChosen(text.toInt())
+                onVotedConfirmation(text.toInt())
                 view?.hideKeyboard()
             }
             false
@@ -138,30 +138,42 @@ class MainFragment : Fragment() {
     }
 
     private fun onPollingStationChosen(station: Int) {
+        viewModel.onPollingStationChanged(station)
         binding.apply {
             pollingStationEdit.visibility = View.GONE
             pollingStationIconEdit.visibility = View.VISIBLE
             pollingStationNumber.visibility = View.VISIBLE
-            viewModel.onPollingStationChanged(station)
         }
     }
 
     private fun onTotalVotersChosen(voters: Int) {
+        viewModel.onTotalVotersChanged(voters)
         binding.apply {
             totalVotersEdit.visibility = View.GONE
             totalVotersIconEdit.visibility = View.VISIBLE
             totalVotersNumber.visibility = View.VISIBLE
-            //turnoutText.text = viewModel.getTurnout()
-            viewModel.onTotalVotersChanged(voters)
         }
     }
 
-    private fun onVotedChosen(voters: Int) {
+    private fun onVotedConfirmation(voters: Int) {
+        val counted = viewModel.currentElection.value?.counter ?: -1
+        if (counted <= 0) onVotedChosen(voters)
+        else {
+            AlertDialog.Builder(context)
+                .setTitle(getString(R.string.voted_edit))
+                .setMessage(getString(R.string.voted_edit_confirmation, voters + counted, voters))
+                .setPositiveButton(getString(R.string.yes)) { _, _ -> onVotedChosen(voters, counted) }
+                .setNegativeButton(getString(R.string.no)) { _, _ -> onVotedChosen(voters) }
+                .show()
+        }
+    }
+
+    private fun onVotedChosen(voters: Int, counted: Int = 0) {
+        viewModel.onVotedChanged(voters, counted)
         binding.apply {
             votedEdit.visibility = View.GONE
             votedIconEdit.visibility = View.VISIBLE
             votedNumber.visibility = View.VISIBLE
-            viewModel.onVotedChanged(voters)
         }
     }
 
