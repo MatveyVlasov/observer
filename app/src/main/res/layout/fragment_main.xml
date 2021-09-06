@@ -46,7 +46,6 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/small_margin"
             android:textSize="@dimen/plain_text"
-            android:visibility="visible"
             tools:text="1020"
             app:layout_constraintBaseline_toBaselineOf="@+id/polling_station_text"
             app:layout_constraintStart_toEndOf="@+id/polling_station_text" />
@@ -57,7 +56,6 @@
             android:layout_height="20dp"
             android:layout_marginTop="16dp"
             android:contentDescription="@string/edit"
-            android:visibility="visible"
             app:layout_constraintStart_toEndOf="@+id/polling_station_number"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/ic_baseline_edit_20" />
@@ -94,7 +92,6 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/small_margin"
             android:textSize="@dimen/plain_text"
-            android:visibility="visible"
             tools:text="2096"
             app:layout_constraintBaseline_toBaselineOf="@+id/total_voters_text"
             app:layout_constraintStart_toEndOf="@+id/total_voters_text" />
@@ -105,7 +102,6 @@
             android:layout_height="20dp"
             android:layout_marginTop="40dp"
             android:contentDescription="@string/edit"
-            android:visibility="visible"
             app:layout_constraintStart_toEndOf="@+id/total_voters_number"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/ic_baseline_edit_20" />
@@ -142,7 +138,6 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/small_margin"
             android:textSize="@dimen/plain_text"
-            android:visibility="visible"
             tools:text="0"
             app:layout_constraintBaseline_toBaselineOf="@+id/voted_text"
             app:layout_constraintStart_toEndOf="@+id/voted_text" />
@@ -153,7 +148,6 @@
             android:layout_height="20dp"
             android:layout_marginTop="63dp"
             android:contentDescription="@string/edit"
-            android:visibility="visible"
             app:layout_constraintStart_toEndOf="@+id/voted_number"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/ic_baseline_edit_20" />
@@ -175,7 +169,6 @@
             android:layout_marginStart="@dimen/small_margin"
             android:layout_marginTop="87dp"
             android:contentDescription="@string/turnout_hours"
-            android:visibility="visible"
             app:layout_constraintStart_toEndOf="@+id/turnout_text"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/ic_baseline_access_time_20" />

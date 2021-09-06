@@ -1,16 +1,22 @@
 package ru.elections.observer.turnout
 
+import android.app.AlertDialog
 import android.content.Context
 import android.text.Editable
+import android.text.InputFilter
+import android.text.InputType
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import ru.elections.observer.ElectionViewModel
+import ru.elections.observer.R
 import ru.elections.observer.database.Action
 import ru.elections.observer.database.Election
 import ru.elections.observer.databinding.ItemRecordBinding
@@ -35,21 +41,23 @@ class TurnoutRecordsAdapter(val viewModel: ElectionViewModel, val view: View) : 
             binding.executePendingBindings()
 
             binding.officialIconEdit.setOnClickListener {
-                it.visibility = View.GONE
-                binding.officialEdit.visibility = View.VISIBLE
-                binding.officialEdit.text = Editable.Factory.getInstance().newEditable("")
-            }
-
-            binding.officialEdit.setOnEditorActionListener { _, actionId, _ ->
-                if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    val text = binding.officialEdit.text.toString()
-                    if (text.isEmpty() || text.toInt() < 0) return@setOnEditorActionListener false
-                    binding.officialEdit.visibility = View.GONE
-                    binding.officialIconEdit.visibility = View.VISIBLE
-                    viewModel.onOfficialChanged(item.actionId, text.toInt())
-                    view.hideKeyboard()
+                val context = view.context
+                val inputEditTextField = EditText(context)
+                inputEditTextField.apply {
+                    inputType = InputType.TYPE_CLASS_NUMBER
+                    filters += InputFilter.LengthFilter(5)
                 }
-                false
+                val dialog = AlertDialog.Builder(context)
+                    .setTitle(context.getString(R.string.edit_official))
+                    .setMessage(context.getString(R.string.edit_official_text))
+                    .setView(inputEditTextField)
+                    .setPositiveButton(context.getString(R.string.ok)) { _, _ ->
+                        val text = inputEditTextField.text.toString()
+                        if (text.isNotEmpty() && text.toInt() > 0) viewModel.onOfficialChanged(item.actionId, text.toInt())
+                    }
+                    .setNegativeButton(context.getString(R.string.cancel), null)
+                    .create()
+                dialog.show()
             }
         }
 
@@ -59,11 +67,6 @@ class TurnoutRecordsAdapter(val viewModel: ElectionViewModel, val view: View) : 
                 val binding = ItemRecordBinding.inflate(layoutInflater, parent, false)
                 return ViewHolder(binding)
             }
-        }
-
-        private fun View.hideKeyboard() {
-            val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-            imm.hideSoftInputFromWindow(windowToken, 0)
         }
     }
 }

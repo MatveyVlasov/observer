@@ -27,6 +27,8 @@
         Сохранить уже подсчитанных избирателей?\nДа: всего %d проголосовавших\nНет: всего %d проголосовавших
     </string>
     <string name="turnout_hours">Посмотреть явку к каждому часу</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="edit_official">Изменение официальных данных</string>
+    <string name="edit_official_text">\nВведите число избирателей по данным комиссии</string>
+    <string name="ok">ОК</string>
+    <string name="cancel">Отмена</string>
 </resources>

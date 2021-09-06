@@ -56,7 +56,7 @@ class TitleFragment : Fragment() {
             .setTitle(getString(R.string.exit))
             .setMessage(getString(R.string.exit_confirmation))
             .setPositiveButton(getString(R.string.yes)) { _, _ -> finishAffinity(requireActivity()) }
-            .setNegativeButton(getString(R.string.no)) { _, _ ->  }
+            .setNegativeButton(getString(R.string.no), null)
             .show()
     }
 }

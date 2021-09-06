@@ -23,7 +23,6 @@
             android:id="@+id/item_date"
             android:layout_width="72dp"
             android:layout_height="50dp"
-            android:layout_marginStart="5dp"
             android:gravity="center"
             app:itemDate="@{action}"
             tools:text="17.09.2021 08:33" />
@@ -34,23 +33,14 @@
             android:background="@color/gray" />
 
         <TextView
-            android:id="@+id/item_total"
-            android:layout_width="38dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="5dp"
-            android:textSize="16sp"
-            app:itemTotal="@{action}"
-            tools:text="1234" />
-
-        <TextView
             android:id="@+id/item_turnout"
-            android:layout_width="60dp"
+            android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="5dp"
-            android:textSize="16sp"
+            android:textSize="@dimen/plain_text"
             app:election="@{election}"
             app:itemTurnout="@{action}"
-            tools:text="30.31 %" />
+            tools:text="111 (30.31 %)" />
 
         <View
             android:layout_width="1dp"
@@ -58,37 +48,14 @@
             android:background="@color/gray" />
 
         <TextView
-            android:id="@+id/item_official_total"
-            android:layout_width="38dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="5dp"
-            android:textSize="16sp"
-            app:itemOfficialTotal="@{action}"
-            tools:text="1664" />
-
-        <TextView
             android:id="@+id/item_official_turnout"
-            android:layout_width="60dp"
+            android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="5dp"
-            android:textSize="16sp"
+            android:textSize="@dimen/plain_text"
             app:election="@{election}"
             app:itemOfficialTurnout="@{action}"
-            tools:text="60.07 %" />
-
-        <EditText
-            android:id="@+id/official_edit"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="0dp"
-            android:autofillHints="no"
-            android:hint="@string/total_voters_hint"
-            android:imeOptions="actionDone"
-            android:inputType="number"
-            android:maxLength="5"
-            android:textSize="16sp"
-            android:visibility="gone"
-            tools:visibility="visible" />
+            tools:text="219 (60.07 %)" />
 
         <ImageView
             android:id="@+id/official_icon_edit"

@@ -85,8 +85,6 @@ class MainFragment : Fragment() {
         }
 
         viewModel.currentElection.observe(viewLifecycleOwner, {
-            Log.i("Main", "Check if null")
-            Log.i("Main", it.toString())
             if (viewModel.isElectionInitialized) {
                 if (it == null) navigateToTitle()
                 else currentElectionObserver(it)
@@ -217,17 +215,6 @@ class MainFragment : Fragment() {
         }
     }
 
-//    private fun recordTurnout(database: ElectionDatabaseDao) {
-//        val startDate = Calendar.getInstance()
-//        startDate[Calendar.DAY_OF_MONTH] = 6
-//        startDate[Calendar.HOUR_OF_DAY] = 10
-//        startDate[Calendar.MINUTE] = 31
-//        startDate[Calendar.SECOND] = 0
-//
-//        Timer().schedule(TurnoutTask.getInstance(database), startDate.time,
-//            TimeUnit.MILLISECONDS.convert(1, TimeUnit.MINUTES))
-//    }
-
     private fun recordTurnout() {
         val startDate = Calendar.getInstance()
         startDate[Calendar.DAY_OF_MONTH] = 6
@@ -252,7 +239,7 @@ class MainFragment : Fragment() {
                     .setTitle(getString(R.string.election_finish))
                     .setMessage(getString(R.string.election_finish_confirmation))
                     .setPositiveButton(getString(R.string.yes)) { _, _ -> onFinishYes() }
-                    .setNegativeButton(getString(R.string.no)) { _, _ ->  }
+                    .setNegativeButton(getString(R.string.no), null)
                     .show()
             }
         }
@@ -275,7 +262,7 @@ class MainFragment : Fragment() {
             .setTitle(getString(R.string.exit))
             .setMessage(getString(R.string.exit_confirmation))
             .setPositiveButton(getString(R.string.yes)) { _, _ -> finishAffinity(requireActivity()) }
-            .setNegativeButton(getString(R.string.no)) { _, _ ->  }
+            .setNegativeButton(getString(R.string.no), null)
             .show()
     }
 }

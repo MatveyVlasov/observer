@@ -4,7 +4,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
-
+        <variable
+            name="electionViewModel"
+            type="ru.elections.observer.ElectionViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -13,26 +15,58 @@
         tools:context=".turnout.TurnoutFragment">
 
         <TextView
-            android:id="@+id/test_text"
-            android:layout_width="match_parent"
-            android:layout_height="100dp"
-            android:text="Hey there"
-            app:layout_constraintBottom_toTopOf="@+id/turnout_records"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:id="@+id/polling_station_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:text="@string/polling_station"
+            android:textSize="@dimen/plain_text"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/polling_station_number"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/small_margin"
+            android:textSize="@dimen/plain_text"
+            tools:text="1020"
+            app:layout_constraintBaseline_toBaselineOf="@+id/polling_station_text"
+            app:layout_constraintStart_toEndOf="@+id/polling_station_text" />
+
+        <TextView
+            android:id="@+id/total_voters_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="4dp"
+            android:text="@string/total_voters"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/polling_station_text" />
+
+
+        <TextView
+            android:id="@+id/total_voters_number"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/small_margin"
+            android:textSize="@dimen/plain_text"
+            tools:text="2096"
+            app:layout_constraintBaseline_toBaselineOf="@+id/total_voters_text"
+            app:layout_constraintStart_toEndOf="@+id/total_voters_text" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/turnout_records"
             android:layout_width="match_parent"
-            android:layout_height="450dp"
+            android:layout_height="500dp"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/test_text" />
+            app:layout_constraintTop_toBottomOf="@+id/total_voters_number" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
