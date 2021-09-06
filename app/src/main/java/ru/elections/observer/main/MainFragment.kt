@@ -1,4 +1,4 @@
-package ru.elections.observer
+package ru.elections.observer.main
 
 import android.app.AlertDialog
 import android.content.Context.INPUT_METHOD_SERVICE
@@ -18,7 +18,11 @@ import ru.elections.observer.database.ElectionDatabase
 import ru.elections.observer.databinding.FragmentMainBinding
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
+import ru.elections.observer.*
+import ru.elections.observer.database.Election
+import ru.elections.observer.database.ElectionDatabaseDao
 import java.util.*
+import java.util.concurrent.TimeUnit
 import kotlin.concurrent.schedule
 
 class MainFragment : Fragment() {
@@ -33,7 +37,7 @@ class MainFragment : Fragment() {
         setHasOptionsMenu(true)
 
         binding = DataBindingUtil.inflate(inflater,
-                        R.layout.fragment_main, container, false)
+            R.layout.fragment_main, container, false)
 
         val application = requireNotNull(this.activity).application
         val database = ElectionDatabase.getInstance(application).electionDatabaseDao
@@ -44,12 +48,18 @@ class MainFragment : Fragment() {
         binding.lifecycleOwner = viewLifecycleOwner
 
 
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) { exitApp() }
+
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding.pollingStationEdit.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 val text = binding.pollingStationEdit.text.toString()
                 if (text.isEmpty() || text.toInt() < 0) return@setOnEditorActionListener false
                 onPollingStationChosen(text.toInt())
-                view?.hideKeyboard()
+                view.hideKeyboard()
             }
             false
         }
@@ -59,7 +69,7 @@ class MainFragment : Fragment() {
                 val text = binding.totalVotersEdit.text.toString()
                 if (text.isEmpty() || text.toInt() < 0) return@setOnEditorActionListener false
                 onTotalVotersChosen(text.toInt())
-                view?.hideKeyboard()
+                view.hideKeyboard()
             }
             false
         }
@@ -69,38 +79,27 @@ class MainFragment : Fragment() {
                 val text = binding.votedEdit.text.toString()
                 if (text.isEmpty() || text.toInt() < 0) return@setOnEditorActionListener false
                 onVotedConfirmation(text.toInt())
-                view?.hideKeyboard()
+                view.hideKeyboard()
             }
             false
         }
 
         viewModel.currentElection.observe(viewLifecycleOwner, {
-            Log.i("MainFragment", "Check if null")
-            Log.i("MainFragment", it.toString())
-            if (it == null) navigateToTitle()
-            else binding.apply {
-                pollingStationNumber.text =
-                    if (it.pollingStation == -1)  "-" else it.pollingStation.toString()
-                totalVotersNumber.text =
-                    if (it.totalVoters == -1)  "-" else it.totalVoters.toString()
-                votedNumber.text = it.voted.toString()
-                counterNumber.text = it.counter.toString()
-                turnoutText.text = viewModel.getTurnout()
-                Timer().schedule(100)  { lastActions.smoothScrollToPosition(0) }
+            Log.i("Main", "Check if null")
+            Log.i("Main", it.toString())
+            if (viewModel.isElectionInitialized) {
+                if (it == null) navigateToTitle()
+                else currentElectionObserver(it)
             }
         })
 
-        binding.pollingStationIconEdit.setOnClickListener {
-            onPollingStationIconEditSelected()
-        }
+        binding.pollingStationIconEdit.setOnClickListener { onPollingStationIconEditSelected() }
 
-        binding.totalVotersIconEdit.setOnClickListener {
-            onTotalVotersIconEditSelected()
-        }
+        binding.totalVotersIconEdit.setOnClickListener { onTotalVotersIconEditSelected() }
 
-        binding.votedIconEdit.setOnClickListener {
-            onVotedIconEditSelected()
-        }
+        binding.votedIconEdit.setOnClickListener { onVotedIconEditSelected() }
+
+        binding.turnoutHours.setOnClickListener { navigateToTurnout() }
 
         viewModel.showSnackbarEvent.observe(viewLifecycleOwner, {
             if (it == true) {
@@ -119,22 +118,32 @@ class MainFragment : Fragment() {
             }
         })
 
+        recordTurnout()
 
-        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
-            AlertDialog.Builder(context)
-                .setTitle(getString(R.string.exit))
-                .setMessage(getString(R.string.exit_confirmation))
-                .setPositiveButton(getString(R.string.yes)) { _, _ -> finishAffinity(requireActivity()) }
-                .setNegativeButton(getString(R.string.no)) { _, _ ->  }
-                .show()
-        }
-
-        return binding.root
     }
 
     private fun navigateToTitle() {
-        Log.i("MainFragment", "Navigate to title")
+        Log.i("Main", "Navigate to Title")
         this.findNavController().navigate(MainFragmentDirections.actionMainFragmentToTitleFragment())
+    }
+
+    private fun navigateToTurnout() {
+        this.findNavController().navigate(MainFragmentDirections.actionMainFragmentToTurnoutFragment())
+    }
+
+    private fun currentElectionObserver(election: Election) {
+        binding.apply {
+            election.let {
+                pollingStationNumber.text =
+                    if (it.pollingStation == -1)  "-" else it.pollingStation.toString()
+                totalVotersNumber.text =
+                    if (it.totalVoters == -1)  "-" else it.totalVoters.toString()
+                votedNumber.text = it.voted.toString()
+                counterNumber.text = it.counter.toString()
+                turnoutText.text = viewModel.getTurnout()
+                Timer().schedule(100)  { lastActions.smoothScrollToPosition(0) }
+            }
+        }
     }
 
     private fun onPollingStationChosen(station: Int) {
@@ -208,6 +217,29 @@ class MainFragment : Fragment() {
         }
     }
 
+//    private fun recordTurnout(database: ElectionDatabaseDao) {
+//        val startDate = Calendar.getInstance()
+//        startDate[Calendar.DAY_OF_MONTH] = 6
+//        startDate[Calendar.HOUR_OF_DAY] = 10
+//        startDate[Calendar.MINUTE] = 31
+//        startDate[Calendar.SECOND] = 0
+//
+//        Timer().schedule(TurnoutTask.getInstance(database), startDate.time,
+//            TimeUnit.MILLISECONDS.convert(1, TimeUnit.MINUTES))
+//    }
+
+    private fun recordTurnout() {
+        val startDate = Calendar.getInstance()
+        startDate[Calendar.DAY_OF_MONTH] = 6
+        startDate[Calendar.HOUR_OF_DAY] = 10
+        startDate[Calendar.MINUTE] = 31
+        startDate[Calendar.SECOND] = 0
+
+        val task = TurnoutTask.getInstance(viewModel) ?: return
+        Timer().schedule(task, startDate.time,
+            TimeUnit.MILLISECONDS.convert(1, TimeUnit.MINUTES))
+    }
+
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.main_menu, menu)
         super.onCreateOptionsMenu(menu, inflater)
@@ -236,5 +268,14 @@ class MainFragment : Fragment() {
     private fun View.hideKeyboard() {
         val imm = context.getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(windowToken, 0)
+    }
+
+    private fun exitApp() {
+        AlertDialog.Builder(context)
+            .setTitle(getString(R.string.exit))
+            .setMessage(getString(R.string.exit_confirmation))
+            .setPositiveButton(getString(R.string.yes)) { _, _ -> finishAffinity(requireActivity()) }
+            .setNegativeButton(getString(R.string.no)) { _, _ ->  }
+            .show()
     }
 }

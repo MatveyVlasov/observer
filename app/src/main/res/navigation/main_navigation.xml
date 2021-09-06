@@ -7,20 +7,28 @@
 
     <fragment
         android:id="@+id/mainFragment"
-        android:name="ru.elections.observer.MainFragment"
+        android:name="ru.elections.observer.main.MainFragment"
         android:label="fragment_main"
         tools:layout="@layout/fragment_main" >
         <action
             android:id="@+id/action_mainFragment_to_titleFragment"
             app:destination="@id/titleFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_turnoutFragment"
+            app:destination="@id/turnoutFragment" />
     </fragment>
     <fragment
         android:id="@+id/titleFragment"
-        android:name="ru.elections.observer.TitleFragment"
+        android:name="ru.elections.observer.title.TitleFragment"
         android:label="fragment_title"
         tools:layout="@layout/fragment_title" >
         <action
             android:id="@+id/action_titleFragment_to_mainFragment"
             app:destination="@id/mainFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/turnoutFragment"
+        android:name="ru.elections.observer.turnout.TurnoutFragment"
+        android:label="fragment_turnout"
+        tools:layout="@layout/fragment_turnout" />
 </navigation>

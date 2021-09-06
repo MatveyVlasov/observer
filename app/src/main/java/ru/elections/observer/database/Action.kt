@@ -5,7 +5,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 enum class ACTIONS {
-    COUNT, REMOVE, SET, ADD
+    COUNT, REMOVE, SET, ADD, TIME
 }
 
 
@@ -24,5 +24,8 @@ data class Action(
     var actionDate: Long = System.currentTimeMillis(),
 
     @ColumnInfo(name = "action_total")
-    var actionTotal: Int
+    var actionTotal: Int,
+
+    @ColumnInfo(name = "official_total")
+    var officialTotal: Int = -1
 )

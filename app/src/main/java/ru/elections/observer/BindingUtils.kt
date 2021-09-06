@@ -1,11 +1,14 @@
 package ru.elections.observer
 
 import android.annotation.SuppressLint
+import android.os.AsyncTask
+import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
-import ru.elections.observer.database.ACTIONS
-import ru.elections.observer.database.Action
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import ru.elections.observer.database.*
 import java.text.SimpleDateFormat
 
 class BindingUtils {
@@ -23,7 +26,8 @@ class BindingUtils {
                 ACTIONS.COUNT -> R.drawable.ic_baseline_add_20
                 ACTIONS.REMOVE -> R.drawable.ic_baseline_horizontal_rule_20
                 ACTIONS.SET -> R.drawable.ic_baseline_edit_20
-                else -> R.drawable.ic_baseline_add_box_20
+                ACTIONS.ADD -> R.drawable.ic_baseline_add_box_20
+                else -> R.drawable.ic_baseline_access_time_20
             })
         }
 
@@ -39,6 +43,27 @@ class BindingUtils {
         @BindingAdapter("itemTotal")
         fun TextView.setItemTotal(item: Action) {
             text = item.actionTotal.toString()
+        }
+
+        @JvmStatic
+        @BindingAdapter(value = ["election", "itemTurnout"], requireAll = true)
+        fun TextView.setItemTurnout(election: Election, item: Action) {
+            var turnout = item.actionTotal / election.totalVoters.toDouble() * 100.0
+            turnout = maxOf(0.0, turnout)
+            text = String.format("(%2.2f %%)", turnout)
+        }
+
+        @JvmStatic
+        @BindingAdapter("itemOfficialTotal")
+        fun TextView.setItemOfficialTotal(item: Action) {
+            text = if (item.officialTotal >= 0) item.officialTotal.toString() else "-"
+        }
+
+        @JvmStatic
+        @BindingAdapter(value = ["election", "itemOfficialTurnout"], requireAll = true)
+        fun TextView.setItemOfficialTurnout(election: Election, item: Action) {
+            var turnout = item.officialTotal / election.totalVoters.toDouble() * 100.0
+            text = if (item.officialTotal >= 0) String.format("(%2.2f %%)", turnout) else "-"
         }
     }
 }

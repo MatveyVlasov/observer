@@ -5,7 +5,7 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 
-@Database(entities = [Election::class, Action::class], version = 7, exportSchema = false)
+@Database(entities = [Election::class, Action::class], version = 9, exportSchema = false)
 abstract class ElectionDatabase : RoomDatabase() {
     abstract val electionDatabaseDao: ElectionDatabaseDao
 

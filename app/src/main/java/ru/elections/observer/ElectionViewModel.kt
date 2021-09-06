@@ -18,6 +18,8 @@ class ElectionViewModel(
     val currentElection: LiveData<Election?>
         get() = _currentElection
 
+    var isElectionInitialized = false
+
     private var _navigateToMainFragment = MutableLiveData<Boolean>()
     val navigateToMainFragment: LiveData<Boolean>
         get() = _navigateToMainFragment
@@ -27,6 +29,7 @@ class ElectionViewModel(
         get() = _showSnackbarEvent
 
     val actions = database.getAllActions()
+    val timeActions = database.getTimeActions()
 
 
     init {
@@ -41,6 +44,8 @@ class ElectionViewModel(
         viewModelScope.launch {
             Log.i("ElectionViewModel", "Initializing...")
             _currentElection.value = database.getCurrent()
+            isElectionInitialized = true
+            _currentElection.value = _currentElection.value // to call observer
             Log.i("ElectionViewModel", _currentElection.value.toString())
             Log.i("ElectionViewModel", "Done!")
         }
@@ -73,6 +78,18 @@ class ElectionViewModel(
                 database.insert(Action(electionId = it.electionId,
                     actionType = if (counted > 0) ACTIONS.ADD else ACTIONS.SET,
                     actionDate = System.currentTimeMillis(), actionTotal = it.counter))
+            }
+        }
+    }
+
+    fun onOfficialChanged(actionId: Long, officialTotal: Int) {
+        viewModelScope.launch {
+            _currentElection.value = currentElection.value?.also {
+                val action = database.getAction(actionId)
+                action?.let {
+                    it.officialTotal = officialTotal
+                    database.update(it)
+                }
             }
         }
     }
@@ -115,6 +132,19 @@ class ElectionViewModel(
         }
     }
 
+    fun onTurnoutRecorded() {
+        viewModelScope.launch {
+            _currentElection.value = currentElection.value?.also {
+                database.insert(
+                    Action(
+                        electionId = it.electionId, actionType = ACTIONS.TIME,
+                        actionDate = System.currentTimeMillis(), actionTotal = it.counter
+                    )
+                )
+            }
+        }
+    }
+
     fun getTurnout(): String {
         var turnout = 0.0
         _currentElection.value?.let {
@@ -123,6 +153,7 @@ class ElectionViewModel(
         turnout = maxOf(turnout, 0.0)
         return String.format("Явка: %2.2f %%", turnout)
     }
+
 
     fun doneNavigating() {
         _navigateToMainFragment.value = false

@@ -2,7 +2,7 @@
     <string name="app_name">Observer</string>
     <string name="polling_station">УИК №:</string>
     <string name="new_election">Новые выборы</string>
-    <string name="total_voters">Число избирателей:</string>
+    <string name="total_voters">Всего избирателей:</string>
     <string name="finish_election">Завершить выборы</string>
     <string name="polling_station_hint">267</string>
     <string name="total_voters_hint">2000</string>
@@ -26,4 +26,7 @@
     <string name="voted_edit_confirmation">
         Сохранить уже подсчитанных избирателей?\nДа: всего %d проголосовавших\nНет: всего %d проголосовавших
     </string>
+    <string name="turnout_hours">Посмотреть явку к каждому часу</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

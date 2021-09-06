@@ -7,13 +7,12 @@
         <variable
             name="electionViewModel"
             type="ru.elections.observer.ElectionViewModel" />
-
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".MainFragment">
+        tools:context=".main.MainFragment">
 
         <TextView
             android:id="@+id/polling_station_text"
@@ -45,7 +44,7 @@
             android:id="@+id/polling_station_number"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="3dp"
+            android:layout_marginStart="@dimen/small_margin"
             android:textSize="@dimen/plain_text"
             android:visibility="visible"
             tools:text="1020"
@@ -93,7 +92,7 @@
             android:id="@+id/total_voters_number"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="3dp"
+            android:layout_marginStart="@dimen/small_margin"
             android:textSize="@dimen/plain_text"
             android:visibility="visible"
             tools:text="2096"
@@ -141,7 +140,7 @@
             android:id="@+id/voted_number"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="3dp"
+            android:layout_marginStart="@dimen/small_margin"
             android:textSize="@dimen/plain_text"
             android:visibility="visible"
             tools:text="0"
@@ -152,7 +151,7 @@
             android:id="@+id/voted_icon_edit"
             android:layout_width="wrap_content"
             android:layout_height="20dp"
-            android:layout_marginTop="64dp"
+            android:layout_marginTop="63dp"
             android:contentDescription="@string/edit"
             android:visibility="visible"
             app:layout_constraintStart_toEndOf="@+id/voted_number"
@@ -168,6 +167,18 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/voted_text"
             tools:text="Явка: 30.32%" />
+
+        <ImageView
+            android:id="@+id/turnout_hours"
+            android:layout_width="wrap_content"
+            android:layout_height="20dp"
+            android:layout_marginStart="@dimen/small_margin"
+            android:layout_marginTop="87dp"
+            android:contentDescription="@string/turnout_hours"
+            android:visibility="visible"
+            app:layout_constraintStart_toEndOf="@+id/turnout_text"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_baseline_access_time_20" />
 
         <TextView
             android:id="@+id/counter_number"

@@ -43,5 +43,4 @@ class LastActionsDiffCallback : DiffUtil.ItemCallback<Action>() {
     override fun areContentsTheSame(oldItem: Action, newItem: Action): Boolean {
         return oldItem == newItem
     }
-
 }

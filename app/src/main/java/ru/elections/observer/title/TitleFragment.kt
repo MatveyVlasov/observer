@@ -1,4 +1,4 @@
-package ru.elections.observer
+package ru.elections.observer.title
 
 import android.app.AlertDialog
 import android.os.Bundle
@@ -11,6 +11,9 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import ru.elections.observer.ElectionViewModel
+import ru.elections.observer.ElectionViewModelFactory
+import ru.elections.observer.R
 import ru.elections.observer.database.ElectionDatabase
 import ru.elections.observer.databinding.FragmentTitleBinding
 
@@ -37,20 +40,23 @@ class TitleFragment : Fragment() {
         viewModel.navigateToMainFragment.observe(viewLifecycleOwner, {
             if (it == true) {
                 this.findNavController().navigate(
-                    TitleFragmentDirections.actionTitleFragmentToMainFragment())
+                    TitleFragmentDirections.actionTitleFragmentToMainFragment()
+                )
                 viewModel.doneNavigating()
             }
         })
 
-        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
-            AlertDialog.Builder(context)
-                .setTitle(getString(R.string.exit))
-                .setMessage(getString(R.string.exit_confirmation))
-                .setPositiveButton(getString(R.string.yes)) { _, _ -> finishAffinity(requireActivity()) }
-                .setNegativeButton(getString(R.string.no)) { _, _ ->  }
-                .show()
-        }
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) { exitApp() }
 
         return binding.root
+    }
+
+    private fun exitApp() {
+        AlertDialog.Builder(context)
+            .setTitle(getString(R.string.exit))
+            .setMessage(getString(R.string.exit_confirmation))
+            .setPositiveButton(getString(R.string.yes)) { _, _ -> finishAffinity(requireActivity()) }
+            .setNegativeButton(getString(R.string.no)) { _, _ ->  }
+            .show()
     }
 }

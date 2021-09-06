@@ -20,6 +20,9 @@ interface ElectionDatabaseDao {
     @Query("SELECT * FROM election_info WHERE not is_finished ORDER BY electionId DESC LIMIT 1")
     suspend fun getCurrent(): Election?
 
+    @Query("SELECT * FROM election_info WHERE electionId = :electionId")
+    fun getElection(electionId: Long): Election?
+
     @Insert
     suspend fun insert(action: Action)
 
@@ -33,4 +36,12 @@ interface ElectionDatabaseDao {
          (SELECT electionId FROM election_info WHERE not is_finished ORDER BY electionId DESC LIMIT 1) 
           ORDER BY actionId DESC""")
     fun getAllActions(): LiveData<List<Action>>
+
+    @Query("""SELECT * FROM actions WHERE action_type = :type AND actions.electionId =
+         (SELECT electionId FROM election_info WHERE not is_finished ORDER BY electionId DESC LIMIT 1) 
+          ORDER BY actionId DESC""")
+    fun getTimeActions(type: ACTIONS = ACTIONS.TIME): LiveData<List<Action>>
+
+    @Query("SELECT * FROM actions WHERE actionId = :actionId")
+    suspend fun getAction(actionId: Long): Action?
 }
