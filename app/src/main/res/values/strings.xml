@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Observer</string>
+    <string name="app_name">Наблюдатель</string>
     <string name="polling_station">УИК №:</string>
     <string name="new_election">Новые выборы</string>
     <string name="total_voters">Всего избирателей:</string>
@@ -10,7 +10,7 @@
     <string name="negative_counter">Число не может быть отрицательным!</string>
     <string name="id">ID</string>
     <string name="action">Действие</string>
-    <string name="date">Дата</string>
+    <string name="time">Время</string>
     <string name="total">Всего</string>
     <string name="exit">Выход</string>
     <string name="exit_confirmation">Вы действительно хотите выйти из приложения?</string>

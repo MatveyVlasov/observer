@@ -24,6 +24,7 @@
             android:layout_width="72dp"
             android:layout_height="50dp"
             android:gravity="center"
+            android:layout_marginEnd="5dp"
             app:itemDate="@{action}"
             tools:text="17.09.2021 08:33" />
 
@@ -61,7 +62,7 @@
             android:id="@+id/official_icon_edit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="5dp"
+            android:layout_marginStart="15dp"
             android:contentDescription="@string/edit"
             app:srcCompat="@drawable/ic_baseline_edit_28" />
     </LinearLayout>

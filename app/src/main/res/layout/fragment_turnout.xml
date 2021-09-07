@@ -56,17 +56,67 @@
             app:layout_constraintBaseline_toBaselineOf="@+id/total_voters_text"
             app:layout_constraintStart_toEndOf="@+id/total_voters_text" />
 
+        <LinearLayout
+            android:id="@+id/turnout_records_header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="15dp"
+            style="?android:listSeparatorTextViewStyle"
+            app:layout_constraintBottom_toTopOf="@+id/turnout_records"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/total_voters_text">
+
+            <TextView
+                android:id="@+id/item_date"
+                android:layout_width="80dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="5dp"
+                android:gravity="center"
+                android:text="@string/time"
+                android:textStyle="bold"/>
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:background="@color/gray" />
+
+            <TextView
+                android:id="@+id/item_turnout"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:textSize="@dimen/plain_text"
+                android:text="Наблюдатель"
+                android:textStyle="bold"/>
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:background="@color/gray" />
+
+            <TextView
+                android:id="@+id/item_official_turnout"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:textSize="@dimen/plain_text"
+                android:text="Комиссия"
+                android:textStyle="bold"/>
+        </LinearLayout>
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/turnout_records"
             android:layout_width="match_parent"
-            android:layout_height="500dp"
+            android:layout_height="465dp"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/total_voters_number" />
+            app:layout_constraintTop_toBottomOf="@+id/turnout_records_header" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

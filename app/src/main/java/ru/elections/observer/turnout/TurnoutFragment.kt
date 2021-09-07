@@ -12,6 +12,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import ru.elections.observer.ElectionViewModel
@@ -48,7 +49,6 @@ class TurnoutFragment : Fragment() {
 
         // binding.electionViewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
-
 
 
         return binding.root
