@@ -30,5 +30,9 @@
         android:id="@+id/turnoutFragment"
         android:name="ru.elections.observer.turnout.TurnoutFragment"
         android:label="fragment_turnout"
-        tools:layout="@layout/fragment_turnout" />
+        tools:layout="@layout/fragment_turnout" >
+        <action
+            android:id="@+id/action_turnoutFragment_to_mainFragment"
+            app:destination="@id/mainFragment" />
+    </fragment>
 </navigation>

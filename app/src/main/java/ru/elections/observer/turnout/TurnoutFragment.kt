@@ -1,27 +1,23 @@
 package ru.elections.observer.turnout
 
-import android.app.Dialog
-import android.content.DialogInterface
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.fragment.NavHostFragment
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
+import androidx.navigation.fragment.findNavController
 import ru.elections.observer.ElectionViewModel
 import ru.elections.observer.ElectionViewModelFactory
 import ru.elections.observer.R
 import ru.elections.observer.database.Election
 import ru.elections.observer.database.ElectionDatabase
 import ru.elections.observer.databinding.FragmentTurnoutBinding
-import java.util.*
+import ru.elections.observer.main.MainFragmentDirections
 
 
 class TurnoutFragment : Fragment() {
@@ -51,8 +47,15 @@ class TurnoutFragment : Fragment() {
         binding.lifecycleOwner = viewLifecycleOwner
 
 
-        return binding.root
-    }
+        val actionBar = (activity as AppCompatActivity?)!!.supportActionBar
+        actionBar?.apply {
+            setHomeButtonEnabled(true)
+            setDisplayHomeAsUpEnabled(true)
+        }
+
+            return binding.root
+        }
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         viewModel.currentElection.observe(viewLifecycleOwner, {
