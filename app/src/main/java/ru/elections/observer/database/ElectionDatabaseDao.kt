@@ -32,6 +32,9 @@ interface ElectionDatabaseDao {
     @Query("DELETE FROM actions")
     suspend fun clearActions()
 
+    @Query("SELECT * FROM actions WHERE actionId = :actionId")
+    suspend fun getAction(actionId: Long): Action?
+
     @Query("""SELECT * FROM actions WHERE actions.electionId =
          (SELECT electionId FROM election_info WHERE not is_finished ORDER BY electionId DESC LIMIT 1) 
           ORDER BY actionId DESC""")
@@ -42,6 +45,8 @@ interface ElectionDatabaseDao {
           ORDER BY actionId DESC""")
     fun getTimeActions(type: ACTIONS = ACTIONS.TIME): LiveData<List<Action>>
 
-    @Query("SELECT * FROM actions WHERE actionId = :actionId")
-    suspend fun getAction(actionId: Long): Action?
+    @Query("""SELECT * FROM actions WHERE action_type = :type AND actions.electionId =
+         (SELECT electionId FROM election_info WHERE not is_finished ORDER BY electionId DESC LIMIT 1) 
+          ORDER BY actionId DESC LIMIT 1""")
+    suspend fun getLastTimeAction(type: ACTIONS = ACTIONS.TIME): Action?
 }

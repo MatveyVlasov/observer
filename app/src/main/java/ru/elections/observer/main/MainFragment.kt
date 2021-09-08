@@ -1,7 +1,14 @@
 package ru.elections.observer.main
 
+import android.app.AlarmManager
 import android.app.AlertDialog
+import android.app.PendingIntent
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Context.ALARM_SERVICE
 import android.content.Context.INPUT_METHOD_SERVICE
+import android.content.Intent
+import android.content.IntentFilter
 import android.os.Bundle
 import android.text.Editable
 import android.util.Log
@@ -11,19 +18,20 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.core.app.ActivityCompat.finishAffinity
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import ru.elections.observer.database.ElectionDatabase
-import ru.elections.observer.databinding.FragmentMainBinding
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import ru.elections.observer.*
 import ru.elections.observer.database.Election
-import ru.elections.observer.database.ElectionDatabaseDao
+import ru.elections.observer.database.ElectionDatabase
+import ru.elections.observer.databinding.FragmentMainBinding
 import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.concurrent.schedule
+
 
 class MainFragment : Fragment() {
     lateinit var binding: FragmentMainBinding
@@ -88,6 +96,9 @@ class MainFragment : Fragment() {
             if (viewModel.isElectionInitialized) {
                 if (it == null) navigateToTitle()
                 else currentElectionObserver(it)
+            } else {
+                Log.i("Main", "Record turnout")
+                recordTurnout()
             }
         })
 
@@ -115,8 +126,6 @@ class MainFragment : Fragment() {
                 adapter.submitList(it)
             }
         })
-
-        recordTurnout()
 
     }
 
@@ -215,18 +224,6 @@ class MainFragment : Fragment() {
         }
     }
 
-    private fun recordTurnout() {
-        val startDate = Calendar.getInstance()
-        startDate[Calendar.DAY_OF_MONTH] = 6
-        startDate[Calendar.HOUR_OF_DAY] = 10
-        startDate[Calendar.MINUTE] = 31
-        startDate[Calendar.SECOND] = 0
-
-        val task = TurnoutTask.getInstance(viewModel) ?: return
-        Timer().schedule(task, startDate.time,
-            TimeUnit.MILLISECONDS.convert(1, TimeUnit.MINUTES))
-    }
-
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.main_menu, menu)
         super.onCreateOptionsMenu(menu, inflater)
@@ -252,9 +249,28 @@ class MainFragment : Fragment() {
         Toast.makeText(context, getString(R.string.election_finished), Toast.LENGTH_LONG).show()
     }
 
-    private fun View.hideKeyboard() {
-        val imm = context.getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.hideSoftInputFromWindow(windowToken, 0)
+
+    private fun recordTurnout() {
+        var task = TurnoutTask.getInstance()
+        task?.cancel()
+
+        val currentDate = Calendar.getInstance()
+
+        val day = currentDate.get(Calendar.DAY_OF_MONTH)
+        // if day ...
+        val hour = currentDate.get(Calendar.HOUR_OF_DAY)
+        if (hour > 21 || hour < 7) return
+        viewModel.onTurnoutRecorded()
+
+        val startDate = Calendar.getInstance()
+        startDate[Calendar.DAY_OF_MONTH] = day
+        startDate[Calendar.HOUR_OF_DAY] = hour + 1
+        startDate[Calendar.MINUTE] = 0
+        startDate[Calendar.SECOND] = 0
+
+        task = TurnoutTask.createInstance(viewModel)
+        Timer().schedule(task, startDate.time,
+            TimeUnit.MILLISECONDS.convert(1, TimeUnit.HOURS))
     }
 
     private fun exitApp() {
@@ -264,5 +280,10 @@ class MainFragment : Fragment() {
             .setPositiveButton(getString(R.string.yes)) { _, _ -> finishAffinity(requireActivity()) }
             .setNegativeButton(getString(R.string.no), null)
             .show()
+    }
+
+    private fun View.hideKeyboard() {
+        val imm = context.getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(windowToken, 0)
     }
 }

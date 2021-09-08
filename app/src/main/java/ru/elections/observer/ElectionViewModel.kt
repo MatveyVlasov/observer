@@ -10,6 +10,7 @@ import ru.elections.observer.database.ACTIONS
 import ru.elections.observer.database.Action
 import ru.elections.observer.database.Election
 import ru.elections.observer.database.ElectionDatabaseDao
+import java.util.concurrent.TimeUnit
 
 class ElectionViewModel(
     val database: ElectionDatabaseDao) : ViewModel() {
@@ -134,11 +135,20 @@ class ElectionViewModel(
 
     fun onTurnoutRecorded() {
         viewModelScope.launch {
+            val lastRecord = database.getLastTimeAction()
+            val timeDifference = System.currentTimeMillis() - (lastRecord?.actionDate ?: 0)
+            val interval = TimeUnit.MILLISECONDS.convert(1, TimeUnit.HOURS)
+            if (timeDifference + 1000 < interval) {
+                Log.i("ElectionViewModel", "timeDifference is")
+                Log.i("ElectionViewModel", timeDifference.toString())
+                return@launch
+            }
             _currentElection.value = currentElection.value?.also {
                 database.insert(
                     Action(
                         electionId = it.electionId, actionType = ACTIONS.TIME,
-                        actionDate = System.currentTimeMillis(), actionTotal = it.counter
+                        actionDate = System.currentTimeMillis() - (timeDifference % interval),
+                        actionTotal = it.counter
                     )
                 )
             }
