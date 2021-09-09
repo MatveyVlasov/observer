@@ -50,7 +50,7 @@ class BindingUtils {
         fun TextView.setItemTurnout(election: Election, item: Action) {
             var turnout = item.actionTotal / election.totalVoters.toDouble() * 100.0
             turnout = maxOf(0.0, turnout)
-            text = String.format("%d (%2.2f %%)", item.actionTotal, turnout)
+            text = String.format(context.getString(R.string.turnout_record), item.actionTotal, turnout)
         }
 
         @JvmStatic
@@ -59,7 +59,7 @@ class BindingUtils {
             var turnout = item.officialTotal / election.totalVoters.toDouble() * 100.0
             turnout = maxOf(0.0, turnout)
             text = if (item.officialTotal >= 0)
-                String.format("%d (%2.2f %%)", item.officialTotal, turnout) else "-"
+                String.format(context.getString(R.string.turnout_record), item.officialTotal, turnout) else "-"
         }
     }
 }

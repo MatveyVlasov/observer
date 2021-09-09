@@ -1,6 +1,8 @@
 package ru.elections.observer
 
+import android.app.NotificationManager
 import android.util.Log
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -29,6 +31,10 @@ class ElectionViewModel(
     val showSnackbarEvent: LiveData<Boolean>
         get() = _showSnackbarEvent
 
+    private var _showTurnoutNotification = MutableLiveData<Action?>()
+    val showTurnoutNotification: LiveData<Action?>
+        get() = _showTurnoutNotification
+
     val actions = database.getAllActions()
     val timeActions = database.getTimeActions()
 
@@ -38,6 +44,7 @@ class ElectionViewModel(
         initializeCurrentElection()
         _navigateToMainFragment.value = false
         _showSnackbarEvent.value = false
+        _showTurnoutNotification.value = null
     }
 
 
@@ -133,7 +140,8 @@ class ElectionViewModel(
         }
     }
 
-    fun onTurnoutRecorded() {
+    fun onTurnoutRecorded(fromTimer: Boolean = true) {
+        if (_currentElection.value?.counter == 0) return
         viewModelScope.launch {
             val lastRecord = database.getLastTimeAction()
             val timeDifference = System.currentTimeMillis() - (lastRecord?.actionDate ?: 0)
@@ -144,13 +152,15 @@ class ElectionViewModel(
                 return@launch
             }
             _currentElection.value = currentElection.value?.also {
-                database.insert(
-                    Action(
-                        electionId = it.electionId, actionType = ACTIONS.TIME,
-                        actionDate = System.currentTimeMillis() - (timeDifference % interval),
-                        actionTotal = it.counter
-                    )
+                val action = Action(
+                    electionId = it.electionId, actionType = ACTIONS.TIME,
+                    actionDate = System.currentTimeMillis() - ((timeDifference + 1000) % interval),
+                    actionTotal = it.counter
                 )
+                database.insert(action)
+                if (fromTimer) {
+                    _showTurnoutNotification.value = action
+                }
             }
         }
     }
@@ -171,6 +181,10 @@ class ElectionViewModel(
 
     fun doneShowingSnackbar() {
         _showSnackbarEvent.value = false
+    }
+
+    fun doneShowingTurnoutNotification() {
+        _showTurnoutNotification.value = null
     }
 
     fun finishElection() {

@@ -31,4 +31,9 @@
     <string name="edit_official_text">\nВведите число избирателей по данным комиссии</string>
     <string name="ok">ОК</string>
     <string name="cancel">Отмена</string>
+    <string name="turnout_id">turnout_id</string>
+    <string name="turnout_info">Turnout info</string>
+    <string name="turnout_notification_title">Явка к этому часу</string>
+    <string name="turnout_notification">Явка на %d:%d составила %2.2f %%</string>
+    <string name="turnout_record">%d (%2.2f %%)</string>
 </resources>

@@ -1,14 +1,7 @@
 package ru.elections.observer.main
 
-import android.app.AlarmManager
-import android.app.AlertDialog
-import android.app.PendingIntent
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Context.ALARM_SERVICE
+import android.app.*
 import android.content.Context.INPUT_METHOD_SERVICE
-import android.content.Intent
-import android.content.IntentFilter
 import android.os.Bundle
 import android.text.Editable
 import android.util.Log
@@ -115,6 +108,31 @@ class MainFragment : Fragment() {
                 Snackbar.make(requireView(),
                     getString(R.string.negative_counter), Snackbar.LENGTH_SHORT).show()
                 viewModel.doneShowingSnackbar()
+            }
+        })
+
+        viewModel.showTurnoutNotification.observe(viewLifecycleOwner, {
+            it?.let {
+                val notificationManager = getSystemService(
+                    requireContext(),
+                    NotificationManager::class.java
+                ) as NotificationManager
+
+                createChannel(getString(R.string.turnout_id), getString(R.string.turnout_info), requireActivity())
+
+                val calendar = Calendar.getInstance()
+                calendar.timeInMillis = it.actionDate
+
+
+                var turnout = it.actionTotal / viewModel.currentElection.value!!.totalVoters.toDouble() * 100.0
+                turnout = maxOf(0.0, turnout)
+
+                notificationManager.sendNotification(
+                    String.format(getString(R.string.turnout_notification),
+                    calendar[Calendar.HOUR_OF_DAY], calendar[Calendar.MINUTE], turnout),
+                    requireContext()
+                )
+                viewModel.doneShowingTurnoutNotification()
             }
         })
 
@@ -257,16 +275,15 @@ class MainFragment : Fragment() {
         val currentDate = Calendar.getInstance()
 
         val day = currentDate.get(Calendar.DAY_OF_MONTH)
-        // if day ...
         val hour = currentDate.get(Calendar.HOUR_OF_DAY)
         if (hour > 21 || hour < 7) return
-        viewModel.onTurnoutRecorded()
+        viewModel.onTurnoutRecorded(false)
 
         val startDate = Calendar.getInstance()
         startDate[Calendar.DAY_OF_MONTH] = day
         startDate[Calendar.HOUR_OF_DAY] = hour + 1
         startDate[Calendar.MINUTE] = 0
-        startDate[Calendar.SECOND] = 0
+        startDate[Calendar.SECOND] = 5
 
         task = TurnoutTask.createInstance(viewModel)
         Timer().schedule(task, startDate.time,
