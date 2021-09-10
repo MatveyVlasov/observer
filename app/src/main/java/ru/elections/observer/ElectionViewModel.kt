@@ -1,17 +1,14 @@
 package ru.elections.observer
 
-import android.app.NotificationManager
 import android.util.Log
-import androidx.core.content.ContextCompat
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import kotlinx.coroutines.launch
 import ru.elections.observer.database.ACTIONS
 import ru.elections.observer.database.Action
 import ru.elections.observer.database.Election
 import ru.elections.observer.database.ElectionDatabaseDao
+import ru.elections.observer.main.MainFragment
+import java.util.*
 import java.util.concurrent.TimeUnit
 
 class ElectionViewModel(
@@ -27,13 +24,9 @@ class ElectionViewModel(
     val navigateToMainFragment: LiveData<Boolean>
         get() = _navigateToMainFragment
 
-    private var _showSnackbarEvent = MutableLiveData<Boolean>()
-    val showSnackbarEvent: LiveData<Boolean>
-        get() = _showSnackbarEvent
-
-    private var _showTurnoutNotification = MutableLiveData<Action?>()
-    val showTurnoutNotification: LiveData<Action?>
-        get() = _showTurnoutNotification
+    private var _showFinishElectionSnackbar = MutableLiveData<Boolean>()
+    val showFinishElectionSnackbar: LiveData<Boolean>
+        get() = _showFinishElectionSnackbar
 
     val actions = database.getAllActions()
     val timeActions = database.getTimeActions()
@@ -43,19 +36,15 @@ class ElectionViewModel(
         Log.i("ElectionViewModel", "Init")
         initializeCurrentElection()
         _navigateToMainFragment.value = false
-        _showSnackbarEvent.value = false
-        _showTurnoutNotification.value = null
+        _showFinishElectionSnackbar.value = false
     }
 
 
     private fun initializeCurrentElection() {
         viewModelScope.launch {
-            Log.i("ElectionViewModel", "Initializing...")
             _currentElection.value = database.getCurrent()
             isElectionInitialized = true
             _currentElection.value = _currentElection.value // to call observer
-            Log.i("ElectionViewModel", _currentElection.value.toString())
-            Log.i("ElectionViewModel", "Done!")
         }
     }
 
@@ -103,13 +92,9 @@ class ElectionViewModel(
     }
 
     fun onNewElectionButton() {
-        Log.i("ElectionViewModel", "OnNewElectionButton")
         viewModelScope.launch {
-            Log.i("ElectionViewModel", "Inserting...")
             database.insert(Election())
             _currentElection.value = database.getCurrent()
-            Log.i("ElectionViewModel", _currentElection.value.toString())
-            Log.i("ElectionViewModel", "Job done")
             _navigateToMainFragment.value = true
         }
     }
@@ -129,7 +114,7 @@ class ElectionViewModel(
         viewModelScope.launch {
             _currentElection.value = currentElection.value?.also {
                 if (it.counter <= 0) {
-                    _showSnackbarEvent.value = true
+                    _showFinishElectionSnackbar.value = true
                     return@launch
                 }
                 --it.counter
@@ -140,38 +125,38 @@ class ElectionViewModel(
         }
     }
 
-    fun onTurnoutRecorded(fromTimer: Boolean = true) {
+    fun onTurnoutRecorded(fragment: MainFragment, fromTimer: Boolean = true) {
         if (_currentElection.value?.counter == 0) return
         viewModelScope.launch {
             val lastRecord = database.getLastTimeAction()
             val timeDifference = System.currentTimeMillis() - (lastRecord?.actionDate ?: 0)
             val interval = TimeUnit.MILLISECONDS.convert(1, TimeUnit.HOURS)
             if (timeDifference + 1000 < interval) {
-                Log.i("ElectionViewModel", "timeDifference is")
-                Log.i("ElectionViewModel", timeDifference.toString())
                 return@launch
             }
             _currentElection.value = currentElection.value?.also {
+                var time = System.currentTimeMillis() - (timeDifference % interval)
+                if (timeDifference == System.currentTimeMillis()) time = timeDifference
                 val action = Action(
                     electionId = it.electionId, actionType = ACTIONS.TIME,
-                    actionDate = System.currentTimeMillis() - ((timeDifference + 1000) % interval),
+                    actionDate = time,
                     actionTotal = it.counter
                 )
                 database.insert(action)
                 if (fromTimer) {
-                    _showTurnoutNotification.value = action
+                    fragment.createNotification(action, currentElection.value!!.totalVoters)
                 }
             }
         }
     }
 
-    fun getTurnout(): String {
+    fun getTurnout(): Double {
         var turnout = 0.0
         _currentElection.value?.let {
             turnout = it.counter / it.totalVoters.toDouble() * 100.0
         }
         turnout = maxOf(turnout, 0.0)
-        return String.format("Явка: %2.2f %%", turnout)
+        return turnout
     }
 
 
@@ -180,11 +165,7 @@ class ElectionViewModel(
     }
 
     fun doneShowingSnackbar() {
-        _showSnackbarEvent.value = false
-    }
-
-    fun doneShowingTurnoutNotification() {
-        _showTurnoutNotification.value = null
+        _showFinishElectionSnackbar.value = false
     }
 
     fun finishElection() {

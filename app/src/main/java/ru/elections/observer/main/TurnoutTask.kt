@@ -3,9 +3,10 @@ package ru.elections.observer.main
 import ru.elections.observer.ElectionViewModel
 import java.util.*
 
-class TurnoutTask(private val viewModel: ElectionViewModel) : TimerTask() {
+class TurnoutTask(private val viewModel: ElectionViewModel,
+                  private val fragment: MainFragment) : TimerTask() {
     override fun run() {
-        viewModel.onTurnoutRecorded()
+        viewModel.onTurnoutRecorded(fragment)
     }
 
     override fun cancel(): Boolean {
@@ -20,8 +21,8 @@ class TurnoutTask(private val viewModel: ElectionViewModel) : TimerTask() {
             return INSTANCE
         }
 
-        fun createInstance(viewModel: ElectionViewModel): TurnoutTask {
-            INSTANCE = TurnoutTask(viewModel)
+        fun createInstance(viewModel: ElectionViewModel, fragment: MainFragment): TurnoutTask {
+            INSTANCE = TurnoutTask(viewModel, fragment)
             return INSTANCE!!
         }
     }

@@ -18,6 +18,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import ru.elections.observer.*
+import ru.elections.observer.database.Action
 import ru.elections.observer.database.Election
 import ru.elections.observer.database.ElectionDatabase
 import ru.elections.observer.databinding.FragmentMainBinding
@@ -47,7 +48,6 @@ class MainFragment : Fragment() {
 
         binding.electionViewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
-
 
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) { exitApp() }
 
@@ -103,7 +103,7 @@ class MainFragment : Fragment() {
 
         binding.turnoutHours.setOnClickListener { navigateToTurnout() }
 
-        viewModel.showSnackbarEvent.observe(viewLifecycleOwner, {
+        viewModel.showFinishElectionSnackbar.observe(viewLifecycleOwner, {
             if (it == true) {
                 Snackbar.make(requireView(),
                     getString(R.string.negative_counter), Snackbar.LENGTH_SHORT).show()
@@ -111,30 +111,6 @@ class MainFragment : Fragment() {
             }
         })
 
-        viewModel.showTurnoutNotification.observe(viewLifecycleOwner, {
-            it?.let {
-                val notificationManager = getSystemService(
-                    requireContext(),
-                    NotificationManager::class.java
-                ) as NotificationManager
-
-                createChannel(getString(R.string.turnout_id), getString(R.string.turnout_info), requireActivity())
-
-                val calendar = Calendar.getInstance()
-                calendar.timeInMillis = it.actionDate
-
-
-                var turnout = it.actionTotal / viewModel.currentElection.value!!.totalVoters.toDouble() * 100.0
-                turnout = maxOf(0.0, turnout)
-
-                notificationManager.sendNotification(
-                    String.format(getString(R.string.turnout_notification),
-                    calendar[Calendar.HOUR_OF_DAY], calendar[Calendar.MINUTE], turnout),
-                    requireContext()
-                )
-                viewModel.doneShowingTurnoutNotification()
-            }
-        })
 
         val adapter = LastActionsAdapter()
         binding.lastActions.adapter = adapter
@@ -148,7 +124,6 @@ class MainFragment : Fragment() {
     }
 
     private fun navigateToTitle() {
-        Log.i("Main", "Navigate to Title")
         this.findNavController().navigate(MainFragmentDirections.actionMainFragmentToTitleFragment())
     }
 
@@ -165,7 +140,9 @@ class MainFragment : Fragment() {
                     if (it.totalVoters == -1)  "-" else it.totalVoters.toString()
                 votedNumber.text = it.voted.toString()
                 counterNumber.text = it.counter.toString()
-                turnoutText.text = viewModel.getTurnout()
+                turnoutText.text = String.format(
+                    getString(R.string.turnout_short_record), viewModel.getTurnout())
+
                 Timer().schedule(100)  { lastActions.smoothScrollToPosition(0) }
             }
         }
@@ -277,7 +254,6 @@ class MainFragment : Fragment() {
         val day = currentDate.get(Calendar.DAY_OF_MONTH)
         val hour = currentDate.get(Calendar.HOUR_OF_DAY)
         if (hour > 21 || hour < 7) return
-        viewModel.onTurnoutRecorded(false)
 
         val startDate = Calendar.getInstance()
         startDate[Calendar.DAY_OF_MONTH] = day
@@ -285,9 +261,34 @@ class MainFragment : Fragment() {
         startDate[Calendar.MINUTE] = 0
         startDate[Calendar.SECOND] = 5
 
-        task = TurnoutTask.createInstance(viewModel)
+        task = TurnoutTask.createInstance(viewModel, this)
         Timer().schedule(task, startDate.time,
             TimeUnit.MILLISECONDS.convert(1, TimeUnit.HOURS))
+    }
+
+    fun createNotification(action: Action, totalVoters: Int) {
+        val notificationManager = getSystemService(
+            requireContext(),
+            NotificationManager::class.java
+        ) as NotificationManager
+
+        createChannel(getString(R.string.turnout_id),
+            getString(R.string.turnout_info),
+            requireActivity()
+        )
+
+        val calendar = Calendar.getInstance()
+        calendar.timeInMillis = action.actionDate
+
+
+        var turnout = action.actionTotal / totalVoters.toDouble() * 100.0
+        turnout = maxOf(0.0, turnout)
+
+        notificationManager.sendNotification(
+            String.format(getString(R.string.turnout_notification),
+                calendar[Calendar.HOUR_OF_DAY], calendar[Calendar.MINUTE], turnout),
+            requireContext()
+        )
     }
 
     private fun exitApp() {

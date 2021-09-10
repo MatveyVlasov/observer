@@ -36,4 +36,5 @@
     <string name="turnout_notification_title">Явка к этому часу</string>
     <string name="turnout_notification">Явка на %d:%d составила %2.2f %%</string>
     <string name="turnout_record">%d (%2.2f %%)</string>
+    <string name="turnout_short_record">Явка: %2.2f %%</string>
 </resources>
