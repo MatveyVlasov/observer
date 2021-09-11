@@ -7,14 +7,17 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import ru.elections.observer.ElectionViewModel
 import ru.elections.observer.database.Election
 import ru.elections.observer.databinding.ItemElectionBinding
 import ru.elections.observer.main.MainFragmentDirections
+import java.util.*
+import kotlin.concurrent.schedule
 
-class PastElectionsAdapter(val fragment: PastFragment) : ListAdapter<Election, PastElectionsAdapter.ViewHolder>(PastElectionsDiffCallback()) {
+class PastElectionsAdapter(private val viewModel: ElectionViewModel, val fragment: PastFragment) : ListAdapter<Election, PastElectionsAdapter.ViewHolder>(PastElectionsDiffCallback()) {
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = getItem(position)
-        holder.bind(item, fragment)
+        holder.bind(item, viewModel, fragment)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -23,12 +26,12 @@ class PastElectionsAdapter(val fragment: PastFragment) : ListAdapter<Election, P
 
 
     class ViewHolder private constructor(private val binding: ItemElectionBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(item: Election, fragment: PastFragment) {
+        fun bind(item: Election, viewModel: ElectionViewModel, fragment: PastFragment) {
             binding.election = item
             binding.executePendingBindings()
 
             binding.electionInfo.setOnClickListener {
-                // fragment.findNavController().navigate()
+                viewModel.onCurrentElectionChanged(item, fragment)
             }
         }
 

@@ -4,6 +4,11 @@
     <string name="new_election">Новые выборы</string>
     <string name="total_voters">Всего избирателей:</string>
     <string name="finish_election">Завершить выборы</string>
+    <string name="election_finish">Завершение выборов</string>
+    <string name="election_finish_confirmation">Вы действительно хотите завершить выборы?</string>
+    <string name="finish_viewing">Завершить просмотр</string>
+    <string name="viewing_finish">Завершение просмотра</string>
+    <string name="viewing_finish_confirmation">Вы действительно хотите завершить обзор данных выборов?</string>
     <string name="polling_station_hint">267</string>
     <string name="total_voters_hint">2000</string>
     <string name="edit">Отредактировать</string>
@@ -16,8 +21,6 @@
     <string name="exit_confirmation">Вы действительно хотите выйти из приложения?</string>
     <string name="yes">Да</string>
     <string name="no">Нет</string>
-    <string name="election_finish">Завершение выборов</string>
-    <string name="election_finish_confirmation">Вы действительно хотите завершить выборы?</string>
     <string name="election_finished">Выборы успешно завершены</string>
     <string name="voted">Проголосовало до начала наблюдения:</string>
     <string name="count">Посчитать избирателя</string>
@@ -39,5 +42,6 @@
     <string name="turnout_main_record">Явка: %2.2f %%</string>
     <string name="past_elections">Прошедшие выборы</string>
     <string name="polling_station">УИК: %d</string>
-    <string name="more">Подробнее...</string>
+    <string name="more">Подробнее…</string>
+    <string name="election_already_finished">Выборы уже завершены!</string>
 </resources>

@@ -21,8 +21,8 @@ data class Election(
     @ColumnInfo(name = "counter")
     var counter: Int = 0,
 
-    @ColumnInfo(name = "is_finished")
-    var isFinished: Boolean = false,
+    @ColumnInfo(name = "is_current")
+    var isCurrent: Boolean = true,
 
     @ColumnInfo(name = "date_start")
     var dateStart: Long = 0,

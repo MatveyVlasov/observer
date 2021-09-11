@@ -15,7 +15,6 @@ import androidx.core.content.ContextCompat.getSystemService
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import ru.elections.observer.*
@@ -56,6 +55,13 @@ class MainFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        if (viewModel.isElectionFinished()) {
+            binding.apply {
+                pollingStationEdit.isEnabled = false
+                totalVotersEdit.isEnabled = false
+                votedEdit.isEnabled = false
+            }
+        }
         binding.pollingStationEdit.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 val text = binding.pollingStationEdit.text.toString()
@@ -104,10 +110,10 @@ class MainFragment : Fragment() {
 
         binding.turnoutHours.setOnClickListener { navigateToTurnout() }
 
-        viewModel.showFinishElectionSnackbar.observe(viewLifecycleOwner, {
+        viewModel.showSnackbar.observe(viewLifecycleOwner, {
             if (it == true) {
                 Snackbar.make(requireView(),
-                    getString(R.string.negative_counter), Snackbar.LENGTH_SHORT).show()
+                    getString(viewModel.snackbarResources), Snackbar.LENGTH_SHORT).show()
                 viewModel.doneShowingSnackbar()
             }
         })
@@ -221,7 +227,9 @@ class MainFragment : Fragment() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.main_menu, menu)
+        var mainMenu = R.menu.main_menu
+        if (viewModel.isElectionFinished()) mainMenu = R.menu.main_menu_finished
+        inflater.inflate(mainMenu, menu)
         super.onCreateOptionsMenu(menu, inflater)
     }
 
@@ -235,14 +243,23 @@ class MainFragment : Fragment() {
                     .setNegativeButton(getString(R.string.no), null)
                     .show()
             }
+            R.id.finish_viewing -> {
+                AlertDialog.Builder(context)
+                    .setTitle(getString(R.string.viewing_finish))
+                    .setMessage(getString(R.string.viewing_finish_confirmation))
+                    .setPositiveButton(getString(R.string.yes)) { _, _ -> onFinishYes(true) }
+                    .setNegativeButton(getString(R.string.no), null)
+                    .show()
+            }
         }
         return super.onOptionsItemSelected(item)
     }
 
-    private fun onFinishYes() {
+    private fun onFinishYes(isAlreadyFinished: Boolean = false) {
         navigateToTitle()
-        viewModel.finishElection()
-        Toast.makeText(context, getString(R.string.election_finished), Toast.LENGTH_LONG).show()
+        viewModel.finishElection(isAlreadyFinished)
+        if (!isAlreadyFinished)
+            Toast.makeText(context, getString(R.string.election_finished), Toast.LENGTH_LONG).show()
     }
 
 

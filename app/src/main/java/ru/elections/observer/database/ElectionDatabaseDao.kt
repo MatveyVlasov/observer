@@ -17,10 +17,10 @@ interface ElectionDatabaseDao {
     @Query("DELETE FROM election_info")
     suspend fun clearElection()
 
-    @Query("SELECT * FROM election_info")
+    @Query("SELECT * FROM election_info ORDER BY electionId DESC")
     fun getAllElections(): LiveData<List<Election>>
 
-    @Query("SELECT * FROM election_info WHERE not is_finished ORDER BY electionId DESC LIMIT 1")
+    @Query("SELECT * FROM election_info WHERE is_current ORDER BY electionId DESC LIMIT 1")
     suspend fun getCurrent(): Election?
 
     @Query("SELECT * FROM election_info WHERE electionId = :electionId")
@@ -39,17 +39,17 @@ interface ElectionDatabaseDao {
     suspend fun getAction(actionId: Long): Action?
 
     @Query("""SELECT * FROM actions WHERE actions.electionId =
-         (SELECT electionId FROM election_info WHERE not is_finished ORDER BY electionId DESC LIMIT 1) 
+         (SELECT electionId FROM election_info WHERE is_current ORDER BY electionId DESC LIMIT 1) 
           ORDER BY actionId DESC""")
     fun getAllActions(): LiveData<List<Action>>
 
     @Query("""SELECT * FROM actions WHERE action_type = :type AND actions.electionId =
-         (SELECT electionId FROM election_info WHERE not is_finished ORDER BY electionId DESC LIMIT 1) 
+         (SELECT electionId FROM election_info WHERE is_current ORDER BY electionId DESC LIMIT 1) 
           ORDER BY actionId DESC""")
     fun getTimeActions(type: ACTIONS = ACTIONS.TIME): LiveData<List<Action>>
 
     @Query("""SELECT * FROM actions WHERE action_type = :type AND actions.electionId =
-         (SELECT electionId FROM election_info WHERE not is_finished ORDER BY electionId DESC LIMIT 1) 
+         (SELECT electionId FROM election_info WHERE is_current ORDER BY electionId DESC LIMIT 1) 
           ORDER BY actionId DESC LIMIT 1""")
     suspend fun getLastTimeAction(type: ACTIONS = ACTIONS.TIME): Action?
 }

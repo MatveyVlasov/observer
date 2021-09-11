@@ -51,7 +51,7 @@ class PastFragment : Fragment() {
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        val adapter = PastElectionsAdapter(this)
+        val adapter = PastElectionsAdapter(viewModel, this)
         binding.pastElections.adapter = adapter
 
 

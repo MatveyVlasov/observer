@@ -2,7 +2,7 @@ package ru.elections.observer
 
 import android.util.Log
 import androidx.lifecycle.*
-import kotlinx.coroutines.async
+import androidx.navigation.fragment.findNavController
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import ru.elections.observer.database.ACTIONS
@@ -10,6 +10,8 @@ import ru.elections.observer.database.Action
 import ru.elections.observer.database.Election
 import ru.elections.observer.database.ElectionDatabaseDao
 import ru.elections.observer.main.MainFragment
+import ru.elections.observer.past.PastFragment
+import ru.elections.observer.past.PastFragmentDirections
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -30,9 +32,11 @@ class ElectionViewModel(
     val navigateToPastFragment: LiveData<Boolean>
         get() = _navigateToPastFragment
 
-    private var _showFinishElectionSnackbar = MutableLiveData<Boolean>()
-    val showFinishElectionSnackbar: LiveData<Boolean>
-        get() = _showFinishElectionSnackbar
+    private var _showSnackbar = MutableLiveData<Boolean>()
+    val showSnackbar: LiveData<Boolean>
+        get() = _showSnackbar
+
+    var snackbarResources = 0
 
     var elections = database.getAllElections()
     val actions = database.getAllActions()
@@ -42,7 +46,7 @@ class ElectionViewModel(
     init {
         initializeCurrentElection()
         _navigateToMainFragment.value = false
-        _showFinishElectionSnackbar.value = false
+        _showSnackbar.value = false
         _navigateToPastFragment.value = false
     }
 
@@ -103,6 +107,18 @@ class ElectionViewModel(
         }
     }
 
+    fun onCurrentElectionChanged(election: Election, fragment: PastFragment) {
+        viewModelScope.launch {
+            election.isCurrent = true
+            database.update(election)
+            _currentElection.value = election
+            isElectionInitialized = true
+
+            fragment.findNavController()
+                .navigate(PastFragmentDirections.actionPastFragmentToMainFragment())
+        }
+    }
+
     fun onNewElectionButton() {
         viewModelScope.launch {
             database.insert(Election())
@@ -116,6 +132,7 @@ class ElectionViewModel(
     }
 
     fun onCount() {
+        if (isElectionFinished(true)) return
         viewModelScope.launch {
             _currentElection.value = currentElection.value?.also {
                 // to set initial time action
@@ -132,10 +149,12 @@ class ElectionViewModel(
     }
 
     fun onRemove() {
+        if (isElectionFinished(true)) return
         viewModelScope.launch {
             _currentElection.value = currentElection.value?.also {
                 if (it.counter <= 0) {
-                    _showFinishElectionSnackbar.value = true
+                    snackbarResources = R.string.negative_counter
+                    _showSnackbar.value = true
                     return@launch
                 }
                 --it.counter
@@ -148,6 +167,7 @@ class ElectionViewModel(
 
     fun onTurnoutRecorded(fragment: MainFragment? = null, firstRecord: Boolean = false) {
         if (_currentElection.value == null) return
+        if (isElectionFinished()) return
         if (_currentElection.value?.counter == 0 && !firstRecord) return
         viewModelScope.launch {
             val lastRecord = database.getLastTimeAction()
@@ -196,18 +216,26 @@ class ElectionViewModel(
     }
 
     fun doneShowingSnackbar() {
-        _showFinishElectionSnackbar.value = false
+        _showSnackbar.value = false
     }
 
-    fun finishElection() {
+    fun isElectionFinished(notification: Boolean = false): Boolean {
+        if ((_currentElection.value?.dateEnd ?: -1) == 0L) return false
+        if (notification) {
+            snackbarResources = R.string.election_already_finished
+            _showSnackbar.value = true
+        }
+        return true
+    }
+
+    fun finishElection(isAlreadyFinished: Boolean = false) {
         viewModelScope.launch {
             _currentElection.value = currentElection.value?.also {
-                it.isFinished = true
-                it.dateEnd = System.currentTimeMillis()
+                it.isCurrent = false
+                if (!isAlreadyFinished) it.dateEnd = System.currentTimeMillis()
                 database.update(it)
             }
             _currentElection.value = null
         }
     }
-
 }
