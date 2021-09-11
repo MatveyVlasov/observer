@@ -17,6 +17,9 @@ interface ElectionDatabaseDao {
     @Query("DELETE FROM election_info")
     suspend fun clearElection()
 
+    @Query("SELECT * FROM election_info")
+    fun getAllElections(): LiveData<List<Election>>
+
     @Query("SELECT * FROM election_info WHERE not is_finished ORDER BY electionId DESC LIMIT 1")
     suspend fun getCurrent(): Election?
 

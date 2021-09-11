@@ -1,15 +1,13 @@
 package ru.elections.observer
 
 import android.annotation.SuppressLint
-import android.os.AsyncTask
-import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import ru.elections.observer.database.*
+import java.text.DateFormat.getDateInstance
 import java.text.SimpleDateFormat
+import java.util.*
 
 class BindingUtils {
     companion object {
@@ -31,12 +29,11 @@ class BindingUtils {
             })
         }
 
-        @SuppressLint("SimpleDateFormat")
         @JvmStatic
         @BindingAdapter("itemDate")
         fun TextView.setItemDate(item: Action) {
-            text = SimpleDateFormat("dd.MM.yyyy HH:mm")
-                .format(item.actionDate).toString()
+            text = SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.US)
+                .format(item.actionDate)
         }
 
         @JvmStatic
@@ -60,6 +57,23 @@ class BindingUtils {
             turnout = maxOf(0.0, turnout)
             text = if (item.officialTotal >= 0)
                 String.format(context.getString(R.string.turnout_record), item.officialTotal, turnout) else "-"
+        }
+
+        @JvmStatic
+        @BindingAdapter("electionDate")
+        fun TextView.setElectionDate(election: Election) {
+            val str = SimpleDateFormat("dd.MM.yyyy - ", Locale.US)
+                .format(election.dateStart) +
+                    SimpleDateFormat("dd.MM.yyyy", Locale.US)
+                .format(election.dateEnd)
+            text = str
+        }
+
+        @JvmStatic
+        @BindingAdapter("electionPollingStation")
+        fun TextView.setElectionPollingStation(election: Election) {
+            text = String.format(
+                context.getString(R.string.polling_station), election.pollingStation)
         }
     }
 }

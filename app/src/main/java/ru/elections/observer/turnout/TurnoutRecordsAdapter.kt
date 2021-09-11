@@ -23,7 +23,7 @@ import ru.elections.observer.databinding.ItemRecordBinding
 import ru.elections.observer.database.ElectionDatabase
 import ru.elections.observer.database.ElectionDatabaseDao
 
-class TurnoutRecordsAdapter(val viewModel: ElectionViewModel, val view: View) : ListAdapter<Action, TurnoutRecordsAdapter.ViewHolder>(LastActionsDiffCallback()) {
+class TurnoutRecordsAdapter(private val viewModel: ElectionViewModel, val view: View) : ListAdapter<Action, TurnoutRecordsAdapter.ViewHolder>(LastActionsDiffCallback()) {
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = getItem(position)
         holder.bind(item, viewModel, view)

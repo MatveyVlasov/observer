@@ -1,4 +1,4 @@
-package ru.elections.observer
+package ru.elections.observer.main
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -8,7 +8,9 @@ import androidx.recyclerview.widget.RecyclerView
 import ru.elections.observer.database.Action
 import ru.elections.observer.databinding.ItemActionBinding
 
-class LastActionsAdapter : ListAdapter<Action, LastActionsAdapter.ViewHolder>(LastActionsDiffCallback()) {
+class LastActionsAdapter : ListAdapter<Action, LastActionsAdapter.ViewHolder>(
+    LastActionsDiffCallback()
+) {
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = getItem(position)
         holder.bind(item)

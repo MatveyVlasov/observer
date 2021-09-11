@@ -25,6 +25,9 @@
         <action
             android:id="@+id/action_titleFragment_to_mainFragment"
             app:destination="@id/mainFragment" />
+        <action
+            android:id="@+id/action_titleFragment_to_pastFragment"
+            app:destination="@id/pastFragment" />
     </fragment>
     <fragment
         android:id="@+id/turnoutFragment"
@@ -33,6 +36,15 @@
         tools:layout="@layout/fragment_turnout" >
         <action
             android:id="@+id/action_turnoutFragment_to_mainFragment"
+            app:destination="@id/mainFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/pastFragment"
+        android:name="ru.elections.observer.past.PastFragment"
+        android:label="fragment_past"
+        tools:layout="@layout/fragment_past" >
+        <action
+            android:id="@+id/action_pastFragment_to_mainFragment"
             app:destination="@id/mainFragment" />
     </fragment>
 </navigation>

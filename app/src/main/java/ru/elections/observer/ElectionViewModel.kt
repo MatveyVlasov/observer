@@ -2,6 +2,8 @@ package ru.elections.observer
 
 import android.util.Log
 import androidx.lifecycle.*
+import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import ru.elections.observer.database.ACTIONS
 import ru.elections.observer.database.Action
@@ -24,19 +26,24 @@ class ElectionViewModel(
     val navigateToMainFragment: LiveData<Boolean>
         get() = _navigateToMainFragment
 
+    private var _navigateToPastFragment = MutableLiveData<Boolean>()
+    val navigateToPastFragment: LiveData<Boolean>
+        get() = _navigateToPastFragment
+
     private var _showFinishElectionSnackbar = MutableLiveData<Boolean>()
     val showFinishElectionSnackbar: LiveData<Boolean>
         get() = _showFinishElectionSnackbar
 
+    var elections = database.getAllElections()
     val actions = database.getAllActions()
     val timeActions = database.getTimeActions()
 
 
     init {
-        Log.i("ElectionViewModel", "Init")
         initializeCurrentElection()
         _navigateToMainFragment.value = false
         _showFinishElectionSnackbar.value = false
+        _navigateToPastFragment.value = false
     }
 
 
@@ -69,6 +76,11 @@ class ElectionViewModel(
     fun onVotedChanged(voters: Int, counted: Int) {
         viewModelScope.launch {
             _currentElection.value = _currentElection.value?.also {
+                // to set initial time action
+                if (it.counter == 0 && database.getLastTimeAction() == null) {
+                    onTurnoutRecorded(firstRecord = true)
+                    delay(500)
+                }
                 it.voted = voters
                 it.counter = voters + counted
                 database.update(it)
@@ -99,9 +111,18 @@ class ElectionViewModel(
         }
     }
 
+    fun onPastElectionsButton() {
+        _navigateToPastFragment.value = true
+    }
+
     fun onCount() {
         viewModelScope.launch {
             _currentElection.value = currentElection.value?.also {
+                // to set initial time action
+                if (it.counter == 0 && database.getLastTimeAction() == null) {
+                    onTurnoutRecorded(firstRecord = true)
+                    delay(500)
+                }
                 ++it.counter
                 database.update(it)
                 database.insert(Action(electionId = it.electionId, actionType = ACTIONS.COUNT,
@@ -125,8 +146,9 @@ class ElectionViewModel(
         }
     }
 
-    fun onTurnoutRecorded(fragment: MainFragment, fromTimer: Boolean = true) {
-        if (_currentElection.value?.counter == 0) return
+    fun onTurnoutRecorded(fragment: MainFragment? = null, firstRecord: Boolean = false) {
+        if (_currentElection.value == null) return
+        if (_currentElection.value?.counter == 0 && !firstRecord) return
         viewModelScope.launch {
             val lastRecord = database.getLastTimeAction()
             val timeDifference = System.currentTimeMillis() - (lastRecord?.actionDate ?: 0)
@@ -134,18 +156,23 @@ class ElectionViewModel(
             if (timeDifference + 1000 < interval) {
                 return@launch
             }
+
             _currentElection.value = currentElection.value?.also {
-                var time = System.currentTimeMillis() - (timeDifference % interval)
-                if (timeDifference == System.currentTimeMillis()) time = timeDifference
+                val time = System.currentTimeMillis() - (timeDifference % interval)
+
                 val action = Action(
                     electionId = it.electionId, actionType = ACTIONS.TIME,
-                    actionDate = time,
+                    actionDate = System.currentTimeMillis() - (timeDifference % interval),
                     actionTotal = it.counter
                 )
                 database.insert(action)
-                if (fromTimer) {
-                    fragment.createNotification(action, currentElection.value!!.totalVoters)
+
+                if (firstRecord) {
+                    it.dateStart = time
+                    database.update(it)
                 }
+
+                fragment?.createNotification(action, currentElection.value!!.totalVoters)
             }
         }
     }
@@ -160,8 +187,12 @@ class ElectionViewModel(
     }
 
 
-    fun doneNavigating() {
+    fun doneNavigatingToMain() {
         _navigateToMainFragment.value = false
+    }
+
+    fun doneNavigatingToPast() {
+        _navigateToPastFragment.value = false
     }
 
     fun doneShowingSnackbar() {
@@ -172,6 +203,7 @@ class ElectionViewModel(
         viewModelScope.launch {
             _currentElection.value = currentElection.value?.also {
                 it.isFinished = true
+                it.dateEnd = System.currentTimeMillis()
                 database.update(it)
             }
             _currentElection.value = null

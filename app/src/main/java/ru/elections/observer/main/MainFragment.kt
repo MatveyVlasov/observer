@@ -15,6 +15,7 @@ import androidx.core.content.ContextCompat.getSystemService
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import ru.elections.observer.*
@@ -124,11 +125,11 @@ class MainFragment : Fragment() {
     }
 
     private fun navigateToTitle() {
-        this.findNavController().navigate(MainFragmentDirections.actionMainFragmentToTitleFragment())
+        findNavController().navigate(MainFragmentDirections.actionMainFragmentToTitleFragment())
     }
 
     private fun navigateToTurnout() {
-        this.findNavController().navigate(MainFragmentDirections.actionMainFragmentToTurnoutFragment())
+        findNavController().navigate(MainFragmentDirections.actionMainFragmentToTurnoutFragment())
     }
 
     private fun currentElectionObserver(election: Election) {
@@ -141,7 +142,7 @@ class MainFragment : Fragment() {
                 votedNumber.text = it.voted.toString()
                 counterNumber.text = it.counter.toString()
                 turnoutText.text = String.format(
-                    getString(R.string.turnout_short_record), viewModel.getTurnout())
+                    getString(R.string.turnout_main_record), viewModel.getTurnout())
 
                 Timer().schedule(100)  { lastActions.smoothScrollToPosition(0) }
             }
@@ -253,7 +254,8 @@ class MainFragment : Fragment() {
 
         val day = currentDate.get(Calendar.DAY_OF_MONTH)
         val hour = currentDate.get(Calendar.HOUR_OF_DAY)
-        if (hour > 21 || hour < 7) return
+        //if (hour > 21 || hour < 7) return
+        viewModel.onTurnoutRecorded()
 
         val startDate = Calendar.getInstance()
         startDate[Calendar.DAY_OF_MONTH] = day

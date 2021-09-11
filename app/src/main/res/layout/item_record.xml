@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
-        <variable
+        polling_station<variable
             name="action"
             type="ru.elections.observer.database.Action" />
         <variable

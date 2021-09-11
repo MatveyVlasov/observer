@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Наблюдатель</string>
-    <string name="polling_station">УИК №:</string>
+    <string name="polling_station_text">УИК №:</string>
     <string name="new_election">Новые выборы</string>
     <string name="total_voters">Всего избирателей:</string>
     <string name="finish_election">Завершить выборы</string>
@@ -34,7 +34,10 @@
     <string name="turnout_id">turnout_id</string>
     <string name="turnout_info">Turnout info</string>
     <string name="turnout_notification_title">Явка к этому часу</string>
-    <string name="turnout_notification">Явка на %d:%d составила %2.2f %%</string>
+    <string name="turnout_notification">Явка на %02d:%02d составила %2.2f %%</string>
     <string name="turnout_record">%d (%2.2f %%)</string>
-    <string name="turnout_short_record">Явка: %2.2f %%</string>
+    <string name="turnout_main_record">Явка: %2.2f %%</string>
+    <string name="past_elections">Прошедшие выборы</string>
+    <string name="polling_station">УИК: %d</string>
+    <string name="more">Подробнее...</string>
 </resources>

@@ -22,5 +22,11 @@ data class Election(
     var counter: Int = 0,
 
     @ColumnInfo(name = "is_finished")
-    var isFinished: Boolean = false
+    var isFinished: Boolean = false,
+
+    @ColumnInfo(name = "date_start")
+    var dateStart: Long = 0,
+
+    @ColumnInfo(name = "date_end")
+    var dateEnd: Long = 0
 )

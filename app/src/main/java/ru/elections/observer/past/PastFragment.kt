@@ -1,27 +1,22 @@
-package ru.elections.observer.turnout
+package ru.elections.observer.past
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.fragment.findNavController
 import ru.elections.observer.ElectionViewModel
 import ru.elections.observer.ElectionViewModelFactory
 import ru.elections.observer.R
-import ru.elections.observer.database.Election
 import ru.elections.observer.database.ElectionDatabase
-import ru.elections.observer.databinding.FragmentTurnoutBinding
-import ru.elections.observer.main.MainFragmentDirections
+import ru.elections.observer.databinding.FragmentPastBinding
 
 
-class TurnoutFragment : Fragment() {
-    lateinit var binding: FragmentTurnoutBinding
+class PastFragment : Fragment() {
+    lateinit var binding: FragmentPastBinding
     lateinit var viewModel: ElectionViewModel
 
     override fun onCreateView(
@@ -31,7 +26,7 @@ class TurnoutFragment : Fragment() {
     ): View {
 
         binding = DataBindingUtil.inflate(inflater,
-            R.layout.fragment_turnout, container, false)
+            R.layout.fragment_past, container, false)
 
         val application = requireNotNull(this.activity).application
         val database = ElectionDatabase.getInstance(application).electionDatabaseDao
@@ -51,39 +46,21 @@ class TurnoutFragment : Fragment() {
             setDisplayHomeAsUpEnabled(true)
         }
 
-            return binding.root
-        }
+        return binding.root
+    }
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        viewModel.currentElection.observe(viewLifecycleOwner, {
-            if (viewModel.isElectionInitialized) {
-                currentElectionObserver(it!!)
-            }
-        })
+        val adapter = PastElectionsAdapter(this)
+        binding.pastElections.adapter = adapter
 
 
-        val adapter = TurnoutRecordsAdapter(viewModel, requireView())
-        binding.turnoutRecords.adapter = adapter
-
-
-        viewModel.timeActions.observe(viewLifecycleOwner, {
+        viewModel.elections.observe(viewLifecycleOwner, {
             it?.let {
                 adapter.submitList(it)
             }
         })
 
-    }
-
-    private fun currentElectionObserver(election: Election) {
-        binding.apply {
-            election.let {
-                pollingStationNumber.text =
-                    if (it.pollingStation == -1) "-" else it.pollingStation.toString()
-                totalVotersNumber.text =
-                    if (it.totalVoters == -1) "-" else it.totalVoters.toString()
-            }
-        }
     }
 }
 

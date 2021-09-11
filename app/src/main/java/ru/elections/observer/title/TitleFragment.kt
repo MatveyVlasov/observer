@@ -39,16 +39,32 @@ class TitleFragment : Fragment() {
 
         viewModel.navigateToMainFragment.observe(viewLifecycleOwner, {
             if (it == true) {
-                this.findNavController().navigate(
-                    TitleFragmentDirections.actionTitleFragmentToMainFragment()
-                )
-                viewModel.doneNavigating()
+                navigateToMain()
+                viewModel.doneNavigatingToMain()
+            }
+        })
+
+        viewModel.navigateToPastFragment.observe(viewLifecycleOwner, {
+            if (it == true) {
+                navigateToPast()
+                viewModel.doneNavigatingToPast()
             }
         })
 
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) { exitApp() }
 
         return binding.root
+    }
+
+    private fun navigateToMain() {
+        findNavController().navigate(
+            TitleFragmentDirections.actionTitleFragmentToMainFragment()
+        )
+    }
+    private fun navigateToPast() {
+        findNavController().navigate(
+            TitleFragmentDirections.actionTitleFragmentToPastFragment()
+        )
     }
 
     private fun exitApp() {
