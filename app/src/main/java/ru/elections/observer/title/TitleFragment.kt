@@ -52,6 +52,13 @@ class TitleFragment : Fragment() {
             }
         })
 
+        viewModel.navigateToHelpFragment.observe(viewLifecycleOwner, {
+            if (it == true) {
+                navigateToHelp()
+                viewModel.doneNavigatingToHelp()
+            }
+        })
+
         val actionBar = (activity as AppCompatActivity?)!!.supportActionBar
         actionBar?.apply {
             setHomeButtonEnabled(false)
@@ -68,9 +75,16 @@ class TitleFragment : Fragment() {
             TitleFragmentDirections.actionTitleFragmentToMainFragment()
         )
     }
+
     private fun navigateToPast() {
         findNavController().navigate(
             TitleFragmentDirections.actionTitleFragmentToPastFragment()
+        )
+    }
+
+    private fun navigateToHelp() {
+        findNavController().navigate(
+            TitleFragmentDirections.actionTitleFragmentToHelpTitleFragment()
         )
     }
 

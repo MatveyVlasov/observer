@@ -7,16 +7,14 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import ru.elections.observer.ElectionViewModel
-import ru.elections.observer.ElectionViewModelFactory
 import ru.elections.observer.R
-import ru.elections.observer.database.ElectionDatabase
-import ru.elections.observer.databinding.FragmentHelpBinding
+import ru.elections.observer.databinding.FragmentHelpTitleBinding
 
 
-class HelpFragment : Fragment() {
-    lateinit var binding: FragmentHelpBinding
+class HelpTitleFragment : Fragment() {
+    lateinit var binding: FragmentHelpTitleBinding
     lateinit var viewModel: ElectionViewModel
 
     override fun onCreateView(
@@ -26,7 +24,7 @@ class HelpFragment : Fragment() {
     ): View {
 
         binding = DataBindingUtil.inflate(inflater,
-            R.layout.fragment_help, container, false)
+            R.layout.fragment_help_title, container, false)
 
         val actionBar = (activity as AppCompatActivity?)!!.supportActionBar
         actionBar?.apply {
@@ -37,9 +35,16 @@ class HelpFragment : Fragment() {
         return binding.root
     }
 
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        binding.buttonNext.setOnClickListener {
+            navigateToNextFragment()
+        }
+    }
 
+    private fun navigateToNextFragment() {
+        findNavController().navigate(
+            HelpTitleFragmentDirections.actionHelpTitleFragmentToHelpMainFragment()
+        )
     }
 }
 
