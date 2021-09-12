@@ -2,12 +2,14 @@ package ru.elections.observer.title
 
 import android.app.AlertDialog
 import android.os.Bundle
+import android.text.Html
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat.finishAffinity
+import androidx.core.text.HtmlCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -38,6 +40,18 @@ class TitleFragment : Fragment() {
         binding.electionViewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
 
+        val actionBar = (activity as AppCompatActivity?)!!.supportActionBar
+        actionBar?.apply {
+            setHomeButtonEnabled(false)
+            setDisplayHomeAsUpEnabled(false)
+        }
+
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) { exitApp() }
+
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         viewModel.navigateToMainFragment.observe(viewLifecycleOwner, {
             if (it == true) {
                 navigateToMain()
@@ -59,15 +73,9 @@ class TitleFragment : Fragment() {
             }
         })
 
-        val actionBar = (activity as AppCompatActivity?)!!.supportActionBar
-        actionBar?.apply {
-            setHomeButtonEnabled(false)
-            setDisplayHomeAsUpEnabled(false)
+        binding.buttonAbout.setOnClickListener {
+            onAboutButton()
         }
-
-        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) { exitApp() }
-
-        return binding.root
     }
 
     private fun navigateToMain() {
@@ -86,6 +94,15 @@ class TitleFragment : Fragment() {
         findNavController().navigate(
             TitleFragmentDirections.actionTitleFragmentToHelpTitleFragment()
         )
+    }
+
+    private fun onAboutButton() {
+        AlertDialog.Builder(context)
+            .setTitle(getString(R.string.about_app))
+            .setMessage(
+                HtmlCompat.fromHtml(getString(R.string.about_app_text), HtmlCompat.FROM_HTML_MODE_LEGACY))
+            .setPositiveButton(getString(R.string.ok),null)
+            .show()
     }
 
     private fun exitApp() {
