@@ -1,10 +1,7 @@
 package ru.elections.observer.database
 
 import androidx.lifecycle.LiveData
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.Query
-import androidx.room.Update
+import androidx.room.*
 
 @Dao
 interface ElectionDatabaseDao {
@@ -13,6 +10,9 @@ interface ElectionDatabaseDao {
 
     @Update
     suspend fun update(election: Election)
+
+    @Delete
+    suspend fun delete(election: Election)
 
     @Query("DELETE FROM election_info")
     suspend fun clearElection()

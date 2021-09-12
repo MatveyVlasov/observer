@@ -119,6 +119,12 @@ class ElectionViewModel(
         }
     }
 
+    fun onElectionDeleted(election: Election) {
+        viewModelScope.launch {
+            database.delete(election)
+        }
+    }
+
     fun onNewElectionButton() {
         viewModelScope.launch {
             database.insert(Election())

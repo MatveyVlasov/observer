@@ -1,5 +1,6 @@
 package ru.elections.observer.past
 
+import android.app.AlertDialog
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,6 +9,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import ru.elections.observer.ElectionViewModel
+import ru.elections.observer.R
 import ru.elections.observer.database.Election
 import ru.elections.observer.databinding.ItemElectionBinding
 import ru.elections.observer.main.MainFragmentDirections
@@ -32,6 +34,19 @@ class PastElectionsAdapter(private val viewModel: ElectionViewModel, val fragmen
 
             binding.electionInfo.setOnClickListener {
                 viewModel.onCurrentElectionChanged(item, fragment)
+            }
+
+            binding.electionDelete.setOnClickListener {
+                val context = fragment.requireContext()
+                val dialog = AlertDialog.Builder(context)
+                    .setTitle(context.getString(R.string.election_deleting))
+                    .setMessage(context.getString(R.string.election_deleting_confirmation))
+                    .setPositiveButton(context.getString(R.string.yes)) { _, _ ->
+                        viewModel.onElectionDeleted(item)
+                    }
+                    .setNegativeButton(context.getString(R.string.no), null)
+                    .create()
+                dialog.show()
             }
         }
 
