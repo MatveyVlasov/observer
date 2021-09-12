@@ -53,7 +53,7 @@ class TurnoutRecordsAdapter(private val viewModel: ElectionViewModel, val view: 
                     .setView(inputEditTextField)
                     .setPositiveButton(context.getString(R.string.ok)) { _, _ ->
                         val text = inputEditTextField.text.toString()
-                        if (text.isNotEmpty() && text.toInt() > 0) viewModel.onOfficialChanged(item.actionId, text.toInt())
+                        if (text.isNotEmpty() && text.toInt() >= 0) viewModel.onOfficialChanged(item.actionId, text.toInt())
                     }
                     .setNegativeButton(context.getString(R.string.cancel), null)
                     .create()

@@ -103,9 +103,13 @@ class MainFragment : Fragment() {
             if (viewModel.isElectionInitialized) {
                 if (it == null) navigateToTitle()
                 else currentElectionObserver(it)
-            } else {
-                Log.i("Main", "Record turnout")
-                recordTurnout()
+            } else recordTurnout()
+        })
+
+        viewModel.navigateToHelpFragment.observe(viewLifecycleOwner, {
+            if (it == true) {
+                navigateToHelp()
+                viewModel.doneNavigatingToHelp()
             }
         })
 
@@ -138,11 +142,21 @@ class MainFragment : Fragment() {
     }
 
     private fun navigateToTitle() {
-        findNavController().navigate(MainFragmentDirections.actionMainFragmentToTitleFragment())
+        findNavController().navigate(
+            MainFragmentDirections.actionMainFragmentToTitleFragment()
+        )
     }
 
     private fun navigateToTurnout() {
-        findNavController().navigate(MainFragmentDirections.actionMainFragmentToTurnoutFragment())
+        findNavController().navigate(
+            MainFragmentDirections.actionMainFragmentToTurnoutFragment()
+        )
+    }
+
+    private fun navigateToHelp() {
+        findNavController().navigate(
+            MainFragmentDirections.actionMainFragmentToHelpTitleFragment()
+        )
     }
 
     private fun currentElectionObserver(election: Election) {
@@ -258,6 +272,7 @@ class MainFragment : Fragment() {
                     .setNegativeButton(getString(R.string.no), null)
                     .show()
             }
+            R.id.help -> viewModel.onHelpButton()
         }
         return super.onOptionsItemSelected(item)
     }
