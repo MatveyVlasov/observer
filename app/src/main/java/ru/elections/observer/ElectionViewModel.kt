@@ -32,6 +32,10 @@ class ElectionViewModel(
     val navigateToPastFragment: LiveData<Boolean>
         get() = _navigateToPastFragment
 
+    private var _navigateToHelpFragment = MutableLiveData<Boolean>()
+    val navigateToHelpFragment: LiveData<Boolean>
+        get() = _navigateToHelpFragment
+
     private var _showSnackbar = MutableLiveData<Boolean>()
     val showSnackbar: LiveData<Boolean>
         get() = _showSnackbar
@@ -45,9 +49,10 @@ class ElectionViewModel(
 
     init {
         initializeCurrentElection()
-        _navigateToMainFragment.value = false
         _showSnackbar.value = false
+        _navigateToMainFragment.value = false
         _navigateToPastFragment.value = false
+        _navigateToHelpFragment.value = false
     }
 
 
@@ -137,6 +142,10 @@ class ElectionViewModel(
         _navigateToPastFragment.value = true
     }
 
+    fun onHelpButton() {
+        _navigateToHelpFragment.value = true
+    }
+
     fun onCount() {
         if (isElectionFinished(true)) return
         viewModelScope.launch {
@@ -219,6 +228,10 @@ class ElectionViewModel(
 
     fun doneNavigatingToPast() {
         _navigateToPastFragment.value = false
+    }
+
+    fun doneNavigatingToHelp() {
+        _navigateToHelpFragment.value = false
     }
 
     fun doneShowingSnackbar() {

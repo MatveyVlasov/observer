@@ -10,6 +10,7 @@ import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.activity.addCallback
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat.finishAffinity
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.databinding.DataBindingUtil
@@ -48,6 +49,12 @@ class MainFragment : Fragment() {
 
         binding.electionViewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
+
+        val actionBar = (activity as AppCompatActivity?)!!.supportActionBar
+        actionBar?.apply {
+            setHomeButtonEnabled(false)
+            setDisplayHomeAsUpEnabled(false)
+        }
 
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) { exitApp() }
 

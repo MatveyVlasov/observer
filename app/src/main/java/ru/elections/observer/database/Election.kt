@@ -25,7 +25,7 @@ data class Election(
     var isCurrent: Boolean = true,
 
     @ColumnInfo(name = "date_start")
-    var dateStart: Long = 0,
+    var dateStart: Long = System.currentTimeMillis(),
 
     @ColumnInfo(name = "date_end")
     var dateEnd: Long = 0

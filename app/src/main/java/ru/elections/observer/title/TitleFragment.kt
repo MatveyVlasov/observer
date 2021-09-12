@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.addCallback
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat.finishAffinity
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -50,6 +51,12 @@ class TitleFragment : Fragment() {
                 viewModel.doneNavigatingToPast()
             }
         })
+
+        val actionBar = (activity as AppCompatActivity?)!!.supportActionBar
+        actionBar?.apply {
+            setHomeButtonEnabled(false)
+            setDisplayHomeAsUpEnabled(false)
+        }
 
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) { exitApp() }
 
