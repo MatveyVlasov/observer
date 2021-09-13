@@ -5,6 +5,7 @@ import android.content.Context
 import android.text.Editable
 import android.text.InputFilter
 import android.text.InputType
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,6 +13,7 @@ import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import androidx.core.content.ContentProviderCompat.requireContext
+import androidx.core.view.marginStart
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -47,6 +49,7 @@ class TurnoutRecordsAdapter(private val viewModel: ElectionViewModel, val view: 
                     inputType = InputType.TYPE_CLASS_NUMBER
                     filters += InputFilter.LengthFilter(5)
                 }
+
                 val dialog = AlertDialog.Builder(context)
                     .setTitle(context.getString(R.string.edit_official))
                     .setMessage(context.getString(R.string.edit_official_text))

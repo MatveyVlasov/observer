@@ -19,13 +19,13 @@
             android:id="@+id/button_new_election"
             android:layout_width="220dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="300dp"
+            android:layout_marginTop="100dp"
             android:onClick="@{() -> electionViewModel.onNewElectionButton()}"
             android:text="@string/new_election"
             app:layout_constraintBottom_toTopOf="@id/button_past_elections"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/app_name"
             app:layout_constraintVertical_bias="0.97" />
 
         <Button
@@ -60,5 +60,18 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/button_help" />
+
+        <TextView
+            android:id="@+id/app_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/app_name"
+            android:textSize="48sp"
+            android:textColor="?attr/colorPrimaryVariant"
+            android:layout_marginTop="200dp"
+            app:layout_constraintBottom_toTopOf="@+id/button_new_election"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

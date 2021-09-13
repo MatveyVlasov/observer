@@ -53,6 +53,8 @@
     <string name="about_app_text"><![CDATA[
         <p align="justify">Данное приложение создано для помощи наблюдателям на выборах</p>
         <p align="justify">Связь с разработчиком:<br>
-        <font color="blue">t.me/vlasovmatvey</font></p>]]>
+        <a href="t.me/vlasovmatvey">t.me/vlasovmatvey</a>]]>
     </string>
+    <string name="observer">Наблюдатель</string>
+    <string name="commission">Комиссия</string>
 </resources>

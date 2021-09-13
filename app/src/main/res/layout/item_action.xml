@@ -12,12 +12,12 @@
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="20dp">
 
         <TextView
             android:id="@+id/item_id"
             android:layout_width="30dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_marginStart="5dp"
             app:itemId="@{action}"
             tools:text="123" />
@@ -25,7 +25,7 @@
         <ImageView
             android:id="@+id/item_action"
             android:layout_width="100dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_marginStart="5dp"
             app:itemAction="@{action}"
             tools:src="@drawable/ic_baseline_add_20" />
@@ -33,7 +33,7 @@
         <TextView
             android:id="@+id/item_date"
             android:layout_width="150dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_marginStart="5dp"
             app:itemDate="@{action}"
             tools:text="17.09.2021 08:33" />
@@ -41,7 +41,7 @@
         <TextView
             android:id="@+id/item_total"
             android:layout_width="50dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_marginStart="5dp"
             app:itemTotal="@{action}"
             tools:text="101" />

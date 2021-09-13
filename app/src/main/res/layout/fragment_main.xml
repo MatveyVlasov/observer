@@ -46,9 +46,9 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/small_margin"
             android:textSize="@dimen/plain_text"
-            tools:text="1020"
             app:layout_constraintBaseline_toBaselineOf="@+id/polling_station_text"
-            app:layout_constraintStart_toEndOf="@+id/polling_station_text" />
+            app:layout_constraintStart_toEndOf="@+id/polling_station_text"
+            tools:text="1020" />
 
         <ImageView
             android:id="@+id/polling_station_icon_edit"
@@ -92,9 +92,9 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/small_margin"
             android:textSize="@dimen/plain_text"
-            tools:text="2096"
             app:layout_constraintBaseline_toBaselineOf="@+id/total_voters_text"
-            app:layout_constraintStart_toEndOf="@+id/total_voters_text" />
+            app:layout_constraintStart_toEndOf="@+id/total_voters_text"
+            tools:text="2096" />
 
         <ImageView
             android:id="@+id/total_voters_icon_edit"
@@ -138,9 +138,9 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/small_margin"
             android:textSize="@dimen/plain_text"
-            tools:text="0"
             app:layout_constraintBaseline_toBaselineOf="@+id/voted_text"
-            app:layout_constraintStart_toEndOf="@+id/voted_text" />
+            app:layout_constraintStart_toEndOf="@+id/voted_text"
+            tools:text="0" />
 
         <ImageView
             android:id="@+id/voted_icon_edit"
@@ -178,23 +178,24 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="60sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@+id/counter_button"
-            app:layout_constraintStart_toStartOf="@+id/counter_button"
-            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop="60dp"
+            app:layout_constraintBottom_toTopOf="@id/counter_button"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/turnout_text"
             tools:text="122" />
 
         <ImageButton
             android:id="@+id/counter_button"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:layout_marginBottom="8dp"
+            android:layout_height="115dp"
+            android:layout_marginTop="23dp"
+            android:layout_marginBottom="40dp"
             android:contentDescription="@string/count"
             android:onClick="@{() -> electionViewModel.onCount()}"
-            app:layout_constraintBottom_toTopOf="@+id/last_actions"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/last_actions_header"
+            app:layout_constraintEnd_toEndOf="@+id/counter_number"
+            app:layout_constraintStart_toStartOf="@+id/counter_number"
             app:layout_constraintTop_toBottomOf="@+id/counter_number"
             app:srcCompat="@drawable/ic_baseline_person_add_alt_1_96" />
 
@@ -259,14 +260,14 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/last_actions"
             android:layout_width="match_parent"
-            android:layout_height="60dp"
+            android:layout_height="0dp"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="40dp"
             android:layout_marginEnd="8dp"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/counter_button" />
+            app:layout_constraintTop_toBottomOf="@+id/last_actions_header" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
