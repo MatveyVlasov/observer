@@ -40,7 +40,7 @@
                 android:paddingHorizontal="12dp"
                 android:paddingVertical="4dp"
                 android:layout_marginTop="12dp"
-                android:text="Step first"
+                android:text="@string/next"
                 android:layout_gravity="end"
                 android:textColor="@color/white" />
 

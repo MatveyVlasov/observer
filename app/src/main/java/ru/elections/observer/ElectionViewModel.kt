@@ -12,6 +12,7 @@ import ru.elections.observer.database.ElectionDatabaseDao
 import ru.elections.observer.main.MainFragment
 import ru.elections.observer.past.PastFragment
 import ru.elections.observer.past.PastFragmentDirections
+import ru.elections.observer.utils.*
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -36,9 +37,9 @@ class ElectionViewModel(
     val showSnackbar: LiveData<Boolean>
         get() = _showSnackbar
 
-    private var _isTraining = MutableLiveData<Boolean>()
-    val isTraining: LiveData<Boolean>
-        get() = _isTraining
+    private var _trainingStatus = MutableLiveData<Training>()
+    val trainingStatus: LiveData<Training>
+        get() = _trainingStatus
 
     private var _guideText = MutableLiveData<String>()
     val guideText: LiveData<String>
@@ -56,8 +57,8 @@ class ElectionViewModel(
         _showSnackbar.value = false
         _navigateToMainFragment.value = false
         _navigateToPastFragment.value = false
-        _isTraining.value = false
-        _guideText.value = "test text"
+        _trainingStatus.value = Training.NO
+        _guideText.value = ""
     }
 
 
@@ -148,7 +149,7 @@ class ElectionViewModel(
     }
 
     fun onTrainingButton() {
-        _isTraining.value = true
+        _trainingStatus.value = Training.FIRST
     }
 
     fun onCount() {
@@ -226,7 +227,68 @@ class ElectionViewModel(
         return turnout
     }
 
-    fun guideTextChanged(str: String) {
+    fun guideTextChanged(step: Int) {
+        val str = when (step) {
+            ID_START_TITLE -> "Нажмите сюда, чтобы начать выборы"
+            ID_START_TITLE + GAP -> "Нажмите сюда, чтобы посмотреть информацию о прошедших выборах"
+            ID_START_MAIN -> {"""
+                Здесь указывается номер УИК
+                Его можно изменить, нажав на иконку справа
+                После ввода номера нужно нажать Done на клавиатуре
+                Пусть наш УИК имеет номер 1020
+            """.trimIndent()
+            }
+            ID_START_MAIN + 1 -> {
+                onPollingStationChanged(1020)
+                "Пусть количество избирателей, прикреплённых к УИК, равно 1984"
+            }
+            ID_START_MAIN + 2 -> {
+                onTotalVotersChanged(1984)
+                """
+                    Этот пункт пригодится, если вы начали наблюдение не с начала выборов
+                    Если вы сразу забыли вписать нужное число, это можно сделать позже
+                    Допустим, до начала нашего наблюдения проголосовало 212 избирателей
+            """.trimIndent()
+            }
+            ID_START_MAIN + 3 -> {
+                onVotedChanged(212, 0)
+                "Это - самая главная кнопка. Нажмите, чтобы посчитать избирателя"
+            }
+            ID_START_MAIN + 4 -> {
+                onCount()
+                """
+                    Эта кнопка уменьшает число проголосовавших на единицу
+                    Она используется в случае ошибочного подсчёта избирателя
+                """.trimIndent()
+            }
+            ID_START_MAIN + 5 -> "Здесь записаны все последние действия"
+            ID_START_MAIN + 6 -> "Здесь показана явка на данный момент"
+            ID_START_MAIN + 7 -> "Нажмите на иконку, чтобы узнать явку к каждому часу"
+            ID_START_MAIN + GAP -> "С помощью меню справа завершите выборы"
+            ID_START_TURNOUT -> "В таблице находится информация о явке к каждому часу с момента начала выборов"
+            ID_START_TURNOUT + 1 -> "Кливнув на иконку, можно указать явку по данным комиссии"
+            ID_START_TURNOUT + 2 -> {
+                _trainingStatus.value = Training.SECOND
+                "Чтобы вернуться на главный экран выборов, нажмите на стрелочку слева"
+            }
+            ID_START_PAST -> "Здесь указаны даты начала и окончания выборов"
+            ID_START_PAST + 1 -> {
+                """
+                    Для просмотра подробной информации о выборах, нажмите на данную иконку
+                    Вы можете посмотреть всю информацию, которая была доступна до завершения выборов
+                    Однако вы не можете ничего редактировать, кроме явки по данным комиссии
+                """.trimIndent()
+            }
+            ID_START_PAST + 2 -> {
+                _trainingStatus.value = Training.NO
+                """
+                    Данная иконка предназначена для удаления записи о выборах
+                    Удаляемся и мы, закончив обучение
+                    Удачного наблюдения!
+                """.trimIndent()
+            }
+            else -> "Ошибка"
+        }
         _guideText.value = str
     }
 

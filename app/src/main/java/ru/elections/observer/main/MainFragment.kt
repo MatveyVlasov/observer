@@ -18,11 +18,15 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
+import com.hyy.highlightpro.HighlightPro
+import com.hyy.highlightpro.parameter.Constraints
 import ru.elections.observer.*
 import ru.elections.observer.database.Action
 import ru.elections.observer.database.Election
 import ru.elections.observer.database.ElectionDatabase
 import ru.elections.observer.databinding.FragmentMainBinding
+import ru.elections.observer.databinding.LayoutGuideBinding
+import ru.elections.observer.utils.*
 import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.concurrent.schedule
@@ -31,6 +35,7 @@ import kotlin.concurrent.schedule
 class MainFragment : Fragment() {
     lateinit var binding: FragmentMainBinding
     lateinit var viewModel: ElectionViewModel
+    lateinit var guideView: LayoutGuideBinding
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -41,6 +46,8 @@ class MainFragment : Fragment() {
 
         binding = DataBindingUtil.inflate(inflater,
             R.layout.fragment_main, container, false)
+        guideView = DataBindingUtil.inflate(inflater,
+            R.layout.layout_guide, container, false)
 
         val application = requireNotNull(this.activity).application
         val database = ElectionDatabase.getInstance(application).electionDatabaseDao
@@ -122,6 +129,13 @@ class MainFragment : Fragment() {
             }
         })
 
+        viewModel.trainingStatus.observe(viewLifecycleOwner, {
+            if (it != Training.NO) showHints(it)
+        })
+
+        viewModel.guideText.observe(viewLifecycleOwner, {
+            guideView.tvTips.text = it
+        })
 
         val adapter = LastActionsAdapter()
         binding.lastActions.adapter = adapter
@@ -280,7 +294,7 @@ class MainFragment : Fragment() {
 
         val day = currentDate.get(Calendar.DAY_OF_MONTH)
         val hour = currentDate.get(Calendar.HOUR_OF_DAY)
-        //if (hour > 21 || hour < 7) return
+        //if (hour > 21 || hour < 7) return // check if it's training
         viewModel.onTurnoutRecorded()
 
         val startDate = Calendar.getInstance()
@@ -317,6 +331,48 @@ class MainFragment : Fragment() {
                 calendar[Calendar.HOUR_OF_DAY], calendar[Calendar.MINUTE], turnout),
             requireContext()
         )
+    }
+
+    private fun showHints(trainingStatus: Training) {
+        if (trainingStatus == Training.FIRST) {
+            HighlightPro.with(this)
+                .setHighlightParameter { getHint(guideView.root, R.id.polling_station_icon_edit) }
+                .setHighlightParameter { getHint(guideView.root, R.id.total_voters_icon_edit) }
+                .setHighlightParameter {
+                    getHint(
+                        guideView.root, R.id.voted_icon_edit,
+                        horizontalConstraints = Constraints.EndToEndOfHighlight
+                    )
+                }
+                .setHighlightParameter { getHint(guideView.root, R.id.counter_button) }
+                .setHighlightParameter {
+                    getHint(
+                        guideView.root, R.id.remove_button,
+                        horizontalConstraints = Constraints.EndToEndOfHighlight
+                    )
+                }
+                .setHighlightParameter {
+                    getHint(
+                        guideView.root, R.id.last_actions,
+                        verticalConstraints = Constraints.BottomToTopOfHighlight
+                    )
+                }
+                .setHighlightParameter { getHint(guideView.root, R.id.turnout_text) }
+                .setHighlightParameter { getHint(guideView.root, R.id.turnout_hours) }
+                .setBackgroundColor(R.color.black)
+                .setOnShowCallback {
+                    viewModel.guideTextChanged(ID_START_MAIN + it)
+                }
+                .show()
+        } else {
+            HighlightPro.with(this)
+                .setHighlightParameter { getHint(guideView.root, R.menu.main_menu) }
+                .setBackgroundColor(R.color.black)
+                .setOnShowCallback {
+                    viewModel.guideTextChanged(ID_START_MAIN + GAP + it)
+                }
+                .show()
+        }
     }
 
     private fun exitApp() {
