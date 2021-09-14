@@ -106,13 +106,6 @@ class MainFragment : Fragment() {
             } else recordTurnout()
         })
 
-        viewModel.navigateToHelpFragment.observe(viewLifecycleOwner, {
-            if (it == true) {
-                navigateToHelp()
-                viewModel.doneNavigatingToHelp()
-            }
-        })
-
         binding.pollingStationIconEdit.setOnClickListener { onPollingStationIconEditSelected() }
 
         binding.totalVotersIconEdit.setOnClickListener { onTotalVotersIconEditSelected() }
@@ -153,11 +146,6 @@ class MainFragment : Fragment() {
         )
     }
 
-    private fun navigateToHelp() {
-        findNavController().navigate(
-            MainFragmentDirections.actionMainFragmentToHelpTitleFragment()
-        )
-    }
 
     private fun currentElectionObserver(election: Election) {
         binding.apply {
@@ -272,7 +260,6 @@ class MainFragment : Fragment() {
                     .setNegativeButton(getString(R.string.no), null)
                     .show()
             }
-            R.id.help -> viewModel.onHelpButton()
         }
         return super.onOptionsItemSelected(item)
     }

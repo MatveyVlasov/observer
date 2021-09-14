@@ -16,9 +16,6 @@
         <action
             android:id="@+id/action_mainFragment_to_turnoutFragment"
             app:destination="@id/turnoutFragment" />
-        <action
-            android:id="@+id/action_mainFragment_to_helpTitleFragment"
-            app:destination="@id/helpTitleFragment" />
     </fragment>
     <fragment
         android:id="@+id/titleFragment"
@@ -31,9 +28,6 @@
         <action
             android:id="@+id/action_titleFragment_to_pastFragment"
             app:destination="@id/pastFragment" />
-        <action
-            android:id="@+id/action_titleFragment_to_helpTitleFragment"
-            app:destination="@id/helpTitleFragment" />
     </fragment>
     <fragment
         android:id="@+id/turnoutFragment"
@@ -51,42 +45,6 @@
         tools:layout="@layout/fragment_past" >
         <action
             android:id="@+id/action_pastFragment_to_mainFragment"
-            app:destination="@id/mainFragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/helpTitleFragment"
-        android:name="ru.elections.observer.help.HelpTitleFragment"
-        android:label="HelpTitleFragment"
-        tools:layout="@layout/fragment_help_title" >
-        <action
-            android:id="@+id/action_helpTitleFragment_to_helpMainFragment"
-            app:destination="@id/helpMainFragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/helpMainFragment"
-        android:name="ru.elections.observer.help.HelpMainFragment"
-        android:label="HelpMainFragment"
-        tools:layout="@layout/fragment_help_main" >
-        <action
-            android:id="@+id/action_helpMainFragment_to_helpTurnoutFragment"
-            app:destination="@id/helpTurnoutFragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/helpTurnoutFragment"
-        android:name="ru.elections.observer.help.HelpTurnoutFragment"
-        android:label="HelpTurnoutFragment"
-        tools:layout="@layout/fragment_help_turnout" >
-        <action
-            android:id="@+id/action_helpTurnoutFragment_to_helpPastFragment"
-            app:destination="@id/helpPastFragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/helpPastFragment"
-        android:name="ru.elections.observer.help.HelpPastFragment"
-        android:label="HelpPastFragment"
-        tools:layout="@layout/fragment_help_past" >
-        <action
-            android:id="@+id/action_helpPastFragment_to_mainFragment"
             app:destination="@id/mainFragment" />
     </fragment>
 </navigation>

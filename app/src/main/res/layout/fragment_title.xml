@@ -44,7 +44,6 @@
             android:layout_width="220dp"
             android:layout_height="wrap_content"
             android:text="@string/help"
-            android:onClick="@{() -> electionViewModel.onHelpButton()}"
             app:layout_constraintBottom_toTopOf="@id/button_about"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

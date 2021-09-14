@@ -2,7 +2,6 @@ package ru.elections.observer.title
 
 import android.app.AlertDialog
 import android.os.Bundle
-import android.text.Html
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,11 +13,14 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import com.github.amlcurran.showcaseview.ShowcaseView
+import com.github.amlcurran.showcaseview.targets.ActionViewTarget
 import ru.elections.observer.ElectionViewModel
 import ru.elections.observer.ElectionViewModelFactory
 import ru.elections.observer.R
 import ru.elections.observer.database.ElectionDatabase
 import ru.elections.observer.databinding.FragmentTitleBinding
+
 
 class TitleFragment : Fragment() {
     lateinit var binding: FragmentTitleBinding
@@ -66,13 +68,6 @@ class TitleFragment : Fragment() {
             }
         })
 
-        viewModel.navigateToHelpFragment.observe(viewLifecycleOwner, {
-            if (it == true) {
-                navigateToHelp()
-                viewModel.doneNavigatingToHelp()
-            }
-        })
-
         binding.buttonAbout.setOnClickListener {
             onAboutButton()
         }
@@ -87,12 +82,6 @@ class TitleFragment : Fragment() {
     private fun navigateToPast() {
         findNavController().navigate(
             TitleFragmentDirections.actionTitleFragmentToPastFragment()
-        )
-    }
-
-    private fun navigateToHelp() {
-        findNavController().navigate(
-            TitleFragmentDirections.actionTitleFragmentToHelpTitleFragment()
         )
     }
 
