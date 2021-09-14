@@ -2,6 +2,4 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:id="@+id/finish_election"
         android:title="@string/finish_election" />
-    <item android:id="@+id/help"
-        android:title="@string/help" />
 </menu>

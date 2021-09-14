@@ -36,6 +36,14 @@ class ElectionViewModel(
     val showSnackbar: LiveData<Boolean>
         get() = _showSnackbar
 
+    private var _isTraining = MutableLiveData<Boolean>()
+    val isTraining: LiveData<Boolean>
+        get() = _isTraining
+
+    private var _guideText = MutableLiveData<String>()
+    val guideText: LiveData<String>
+        get() = _guideText
+
     var snackbarResources = 0
 
     var elections = database.getAllElections()
@@ -48,6 +56,8 @@ class ElectionViewModel(
         _showSnackbar.value = false
         _navigateToMainFragment.value = false
         _navigateToPastFragment.value = false
+        _isTraining.value = false
+        _guideText.value = "test text"
     }
 
 
@@ -137,6 +147,10 @@ class ElectionViewModel(
         _navigateToPastFragment.value = true
     }
 
+    fun onTrainingButton() {
+        _isTraining.value = true
+    }
+
     fun onCount() {
         if (isElectionFinished(true)) return
         viewModelScope.launch {
@@ -210,6 +224,10 @@ class ElectionViewModel(
         }
         turnout = maxOf(turnout, 0.0)
         return turnout
+    }
+
+    fun guideTextChanged(str: String) {
+        _guideText.value = str
     }
 
 

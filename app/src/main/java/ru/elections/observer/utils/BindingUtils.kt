@@ -1,11 +1,10 @@
-package ru.elections.observer
+package ru.elections.observer.utils
 
-import android.annotation.SuppressLint
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
+import ru.elections.observer.R
 import ru.elections.observer.database.*
-import java.text.DateFormat.getDateInstance
 import java.text.SimpleDateFormat
 import java.util.*
 
