@@ -294,7 +294,7 @@ class MainFragment : Fragment() {
 
         val day = currentDate.get(Calendar.DAY_OF_MONTH)
         val hour = currentDate.get(Calendar.HOUR_OF_DAY)
-        //if (hour > 21 || hour < 7) return // check if it's training
+        if ((hour > 21 || hour < 7) && viewModel.trainingStatus.value == Training.NO) return
         viewModel.onTurnoutRecorded()
 
         val startDate = Calendar.getInstance()
