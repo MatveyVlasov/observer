@@ -186,14 +186,16 @@ class ElectionViewModel(
         }
     }
 
-    fun onTurnoutRecorded(fragment: MainFragment? = null, firstRecord: Boolean = false) {
+    fun onTurnoutRecorded(fragment: MainFragment? = null, firstRecord: Boolean = false,
+                          ignoreInterval: Boolean = false) {
         if (_currentElection.value == null) return
         if (isElectionFinished()) return
         if (_currentElection.value?.counter == 0 && !firstRecord) return
         viewModelScope.launch {
             val lastRecord = database.getLastTimeAction()
             val timeDifference = System.currentTimeMillis() - (lastRecord?.actionDate ?: 0)
-            val interval = TimeUnit.MILLISECONDS.convert(1, TimeUnit.HOURS)
+            var interval = TimeUnit.MILLISECONDS.convert(1, TimeUnit.HOURS)
+            if (ignoreInterval) interval = 1
             if (timeDifference + 1000 < interval) {
                 return@launch
             }
@@ -213,7 +215,7 @@ class ElectionViewModel(
                     database.update(it)
                 }
 
-                fragment?.createNotification(action, currentElection.value!!.totalVoters)
+                fragment?.createNotification(action, it.totalVoters)
             }
         }
     }
@@ -318,7 +320,10 @@ class ElectionViewModel(
         viewModelScope.launch {
             _currentElection.value = currentElection.value?.also {
                 it.isCurrent = false
-                if (!isAlreadyFinished) it.dateEnd = System.currentTimeMillis()
+                if (!isAlreadyFinished) {
+                    onTurnoutRecorded(ignoreInterval = true)
+                    it.dateEnd = System.currentTimeMillis()
+                }
                 database.update(it)
             }
             _currentElection.value = null
